@@ -1,0 +1,24 @@
+# The slang config file which works without build_runner.
+# 'dart run slang' will pick up this file.
+# In this example, no configuration is needed.
+
+base_locale: en
+input_directory: lib/i18n/json
+output_directory: lib/i18n
+translation_overrides: true
+locale_handling: false
+timestamp: false
+translation_class_visibility: public
+
+# You can use the following to generate the string_story files.
+# This is not needed for the slang package itself.
+# If you want to use the string_story package, you can run:
+# dart run string_story_utils:generate
+string_story:
+  version_code: 1
+  hash_directory: lib/i18n/hash
+  input_directory: lib/string_story/stories
+  output_directory: lib/string_story/gen
+  # see https://docs.dartantic.ai/providers
+  translation_provider: google
+  translation_model: gemini-2.5-flash-lite

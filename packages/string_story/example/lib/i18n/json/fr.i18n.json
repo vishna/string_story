@@ -1,0 +1,16 @@
+{
+  "aboutBtn": "À propos",
+  "aboutText": "Ceci est une application exemple utilisant String Story.",
+  "aboutTitle": "À propos",
+  "changeLanguage": "Changer de langue",
+  "developerMode": "Mode développeur",
+  "homeTitle": "Accueil",
+  "localeEditor": "Éditeur de Localisation",
+  "settingsBtn": "Paramètres",
+  "settingsText": "Modifiez vos préférences ici.",
+  "settingsTitle": "Paramètres",
+  "snackbarMessage": "Modifications de la traduction copiées dans le presse-papiers.",
+  "sorry": "Désolé",
+  "stringStoryEditor": "Éditeur d'Histoire de Chaîne",
+  "welcome": "Bienvenue dans String Story!"
+}

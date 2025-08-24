@@ -1,0 +1,624 @@
+// ignore_for_file: depend_on_referenced_packages
+
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:{{packageName}}/{{{stringStory}}}/string_story.dart';
+import 'package:email_validator/email_validator.dart';
+import 'package:simple_rich_text/simple_rich_text.dart';
+import 'package:string_story/string_story.dart';
+import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
+import 'package:provider/provider.dart';
+
+int get _slangStringsVersion =>
+    StringStoryService.instance.generatedDelegate.versionCode;
+
+/// Submit your translations
+/// - Entry
+///   - Progress
+///   - Show My Changes
+/// - Contact data
+///   - Name
+///   - Username
+/// - Agree and submit
+/// - Thank You
+class LocaleSubmitSheet {
+  LocaleSubmitSheet._();
+
+  static Future<void> show(
+    BuildContext context, {
+    required SlangEditorCubit editorCubit,
+    required SlangBaseCubit baseCubit,
+  }) async {
+    final baseState = baseCubit.state.maybeMap(
+      data: (it) => it,
+      orElse: () => null,
+    );
+
+    if (baseState == null) {
+      return;
+    }
+
+    final controller = _SheetsController(
+      contactData:
+          StringStoryService.instance.inAppEditorConfig.getUserContactData(),
+      onSubmitContactData: (contactData) {
+        baseCubit.setContactData(contactData);
+        StringStoryService.instance.inAppEditorConfig
+            .setUserContactData(contactData);
+      },
+      submitTranslationData: () async =>
+          await _submitTranslations(slangBaseCubit: baseCubit),
+      onExit: () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    await WoltModalSheet.show(
+      pageIndexNotifier: controller._position,
+      context: context,
+      pageListBuilder: (_) => _Sheets.values.map((it) => it.builder()).toList(),
+      modalDecorator: (child) => MultiProvider(
+        providers: [
+          Provider.value(
+            value: controller,
+          ),
+          BlocProvider<SlangEditorCubit>.value(
+            value: editorCubit,
+          ),
+        ],
+        child: child,
+      ),
+    );
+
+    controller.dispose();
+  }
+}
+
+class _SheetsController {
+  final _position = ValueNotifier(0);
+  late final listenable = Listenable.merge([
+    _position,
+    emailController,
+    nameController,
+    webController,
+    emailError,
+    nameError,
+    webError,
+    dataStatus,
+  ]);
+  final _history = <_Sheets>[];
+  final VoidCallback onExit;
+  final TextEditingController emailController;
+  final TextEditingController nameController;
+  final TextEditingController webController;
+  final emailError = ValueNotifier<String?>(null);
+  final nameError = ValueNotifier<String?>(null);
+  final webError = ValueNotifier<String?>(null);
+  final void Function(UserContactData data) onSubmitContactData;
+  final Future<void> Function() submitTranslationData;
+  final dataStatus = ValueNotifier<_DataStatus>(const _DataStatusIdle());
+
+  _SheetsController({
+    required this.onExit,
+    required this.onSubmitContactData,
+    required this.submitTranslationData,
+    UserContactData? contactData,
+  })  : emailController = TextEditingController(text: contactData?.email),
+        nameController = TextEditingController(text: contactData?.name),
+        webController = TextEditingController(text: contactData?.website) {
+    moveTo(_Sheets.entry);
+  }
+
+  void moveTo(_Sheets sheet) {
+    _position.value = _Sheets.values.indexOf(sheet);
+    _history.add(sheet);
+  }
+
+  bool checkContactData() {
+    final email = emailController.text;
+    final isEmailValid = EmailValidator.validate(email);
+    final isNameValid = nameController.text.trim().isNotEmpty;
+    if (isEmailValid) {
+      emailError.value = null;
+    } else {
+      emailError.value = stringStoryPackageStrings.invalidEmailAddress;
+    }
+    if (isNameValid) {
+      nameError.value = null;
+    } else {
+      nameError.value = stringStoryPackageStrings.nameCannotBeEmpty;
+    }
+
+    return isEmailValid && isNameValid;
+  }
+
+  void moveToAgreement() {
+    final allGood = checkContactData();
+    if (allGood) {
+      onSubmitContactData(
+        UserContactData(
+          email: emailController.text.trim(),
+          name: nameController.text.trim(),
+          website: webController.text.trim(),
+        ),
+      );
+      moveTo(_Sheets.agreement);
+    }
+  }
+
+  Future<void> submitTranslations() async {
+    moveTo(_Sheets.sending);
+    if (dataStatus.value == const _DataStatusInProgress()) {
+      return;
+    }
+    try {
+      dataStatus.value = const _DataStatusInProgress();
+      await submitTranslationData();
+      dataStatus.value = const _DataStatusOK();
+      moveTo(_Sheets.thankYou);
+      await Future.delayed(const Duration(seconds: 5));
+      onExit();
+    } catch (e) {
+      dataStatus.value = _DataStatusFail(e);
+    }
+  }
+
+  bool canGoBack() => _history.length > 1;
+
+  void goBack() {
+    if (canGoBack()) {
+      _history.removeLast();
+      _position.value = _Sheets.values.indexOf(_history.last);
+    } else {
+      onExit();
+    }
+  }
+
+  void dispose() {
+    emailController.dispose();
+    nameController.dispose();
+  }
+}
+
+enum _Sheets {
+  entry(_entry),
+  diff(_diff),
+  contactData(_contactData),
+  agreement(_agreeAndSubmit),
+  sending(_sending),
+  thankYou(_thankYou);
+
+  final SliverWoltModalSheetPage Function() builder;
+
+  const _Sheets(this.builder);
+}
+
+const _bottomSafePadding = SliverToBoxAdapter(
+  child: SafeAreaBottom(
+    minimumPadding: DimensionsDouble.m,
+  ),
+);
+
+SliverWoltModalSheetPage _entry() {
+  return SliverWoltModalSheetPage(
+    leadingNavBarWidget: const _LeadingButton(),
+    mainContentSliversBuilder: (context) {
+      final editorState = context.watch<SlangEditorCubit>().state;
+      final baseState = context.watch<SlangBaseCubit>().state.maybeMap(
+            data: (it) => it,
+            orElse: () => null,
+          );
+      final totalCount = StringKey.values.length;
+      final diffCount = editorState.diffKeys.length;
+      final approvedCount = baseState?.approvedKeys.length ?? 0;
+
+      return [
+        SliverPadding(
+          padding: P_M,
+          sliver: SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(stringStoryPackageStrings.totalWords(totalCount)),
+                HookBuilder(builder: (context) {
+                  final coveredKeys = useMemoized(() {
+                    final coveredKeys = <StringKey>{};
+                    for (final story in stringStories()) {
+                      coveredKeys.addAll(story.keys);
+                    }
+                    return coveredKeys;
+                  });
+
+                  if (coveredKeys.length == totalCount) {
+                    return const SizedBox.shrink();
+                  }
+
+                  final missingCount = totalCount - coveredKeys.length;
+                  final missing = Set<StringKey>.from(StringKey.values)
+                    ..removeAll(coveredKeys);
+
+                  return Text(
+                    stringStoryPackageStrings.missingStories(
+                        missingCount, missing.map((it) => it.key).join(", ")),
+                    style: TextStyle(color: context.colors.error),
+                  );
+                }),
+                Text(stringStoryPackageStrings.corrected(diffCount)),
+                Text(stringStoryPackageStrings.approved(approvedCount)),
+              ],
+            ),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: PH_M,
+            child: OutlinedButton(
+              onPressed: () async {
+                context.read<_SheetsController>().moveTo(_Sheets.diff);
+              },
+              child: Text(stringStoryPackageStrings.viewMyChanges),
+            ),
+          ),
+        ),
+        const SliverToBoxAdapter(
+          child: SV_M,
+        ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: PH_M,
+            child: OutlinedButton(
+              onPressed: () async {
+                // determine what is next
+                context.read<_SheetsController>().moveTo(_Sheets.contactData);
+              },
+              child: Text(stringStoryPackageStrings.submitMyChanges),
+            ),
+          ),
+        ),
+        _bottomSafePadding,
+      ];
+    },
+  );
+}
+
+SliverWoltModalSheetPage _diff() {
+  return SliverWoltModalSheetPage(
+      leadingNavBarWidget: const _LeadingButton(),
+      topBarTitle: Text(stringStoryPackageStrings.myChanges),
+      isTopBarLayerAlwaysVisible: true,
+      mainContentSliversBuilder: (context) {
+        final diffKeys =
+            context.select((SlangEditorCubit cubit) => cubit.state.diffKeys);
+
+        return [
+          if (diffKeys.isEmpty)
+            SliverToBoxAdapter(
+              child: StringStoryEmptyState(
+                icon: Icon(Icons.language),
+                description: stringStoryPackageStrings.noChangesYet,
+              ),
+            ),
+          SliverList.builder(
+            itemCount: diffKeys.length,
+            itemBuilder: (context, index) {
+              return _DiffWidget(slangKey: diffKeys[index]);
+            },
+          ),
+          _bottomSafePadding,
+        ];
+      });
+}
+
+SliverWoltModalSheetPage _contactData() {
+  return SliverWoltModalSheetPage(
+    isTopBarLayerAlwaysVisible: true,
+    leadingNavBarWidget: const _LeadingButton(),
+    topBarTitle: Text(stringStoryPackageStrings.yourContactData),
+    mainContentSliversBuilder: (context) {
+      final sheetController = context.read<_SheetsController>();
+      return [
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: P_M,
+            child: SimpleRichText(
+              stringStoryPackageStrings.contactDataRationale,
+              style: TextStyle(
+                color: context.colors.onSurface,
+              ),
+              textAlign: TextAlign.justify,
+            ),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: HookBuilder(builder: (context) {
+            return SheetInput(
+              padding: PH_M,
+              key: const ValueKey("contributorName"),
+              textController: sheetController.nameController,
+              hintText: stringStoryPackageStrings.nameOrNickName,
+              prefixIcon: const Icon(Icons.person),
+              errorText: useListenable(sheetController.nameError).value,
+            );
+          }),
+        ),
+        const SliverToBoxAdapter(
+          child: SV_M,
+        ),
+        SliverToBoxAdapter(
+          child: HookBuilder(builder: (context) {
+            return SheetInput(
+              padding: PH_M,
+              key: const ValueKey("emailAddress"),
+              textController: sheetController.emailController,
+              hintText: stringStoryPackageStrings.emailAddress,
+              prefixIcon: const Icon(Icons.email_outlined),
+              errorText: useListenable(sheetController.emailError).value,
+            );
+          }),
+        ),
+        const SliverToBoxAdapter(
+          child: SV_M,
+        ),
+        SliverToBoxAdapter(
+          child: HookBuilder(builder: (context) {
+            return SheetInput(
+              padding: PH_M,
+              key: const ValueKey("websiteAddress"),
+              textController: sheetController.webController,
+              hintText: stringStoryPackageStrings.nameOrNickName,
+              prefixIcon: const Icon(Icons.web_sharp),
+              errorText: useListenable(sheetController.webError).value,
+            );
+          }),
+        ),
+        const SliverToBoxAdapter(
+          child: SV_XL,
+        ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: PH_M,
+            child: OutlinedButton(
+              onPressed: () async {
+                // determine what is next
+                context.read<_SheetsController>().moveToAgreement();
+              },
+              child: Text(stringStoryPackageStrings.next),
+            ),
+          ),
+        ),
+        _bottomSafePadding,
+      ];
+    },
+  );
+}
+
+SliverWoltModalSheetPage _agreeAndSubmit() {
+  return SliverWoltModalSheetPage(
+    isTopBarLayerAlwaysVisible: true,
+    leadingNavBarWidget: const _LeadingButton(),
+    topBarTitle: Text(stringStoryPackageStrings.agreement),
+    mainContentSliversBuilder: (context) => [
+      SliverToBoxAdapter(
+        child: Padding(
+          padding: P_M,
+          child: Text(
+            stringStoryPackageStrings.agreementContent,
+            textAlign: TextAlign.justify,
+          ),
+        ),
+      ),
+      SliverToBoxAdapter(
+        child: Padding(
+          padding: PH_M,
+          child: OutlinedButton(
+            onPressed: () async {
+              // determine what is next
+              context.read<_SheetsController>().submitTranslations();
+            },
+            child: Text(stringStoryPackageStrings.agreeAndSubmit),
+          ),
+        ),
+      ),
+      _bottomSafePadding,
+    ],
+  );
+}
+
+sealed class _DataStatus {
+  const _DataStatus();
+}
+
+class _DataStatusIdle extends _DataStatus {
+  const _DataStatusIdle();
+}
+
+class _DataStatusOK extends _DataStatus {
+  const _DataStatusOK();
+}
+
+class _DataStatusFail extends _DataStatus {
+  const _DataStatusFail(this.reason);
+
+  final dynamic reason;
+}
+
+class _DataStatusInProgress extends _DataStatus {
+  const _DataStatusInProgress();
+}
+
+SliverWoltModalSheetPage _sending() {
+  return SliverWoltModalSheetPage(
+      isTopBarLayerAlwaysVisible: true,
+      leadingNavBarWidget: const _LeadingButton(),
+      topBarTitle: Text(stringStoryPackageStrings.sendingData),
+      mainContentSliversBuilder: (context) {
+        final controller = context.read<_SheetsController>();
+        return [
+          SliverToBoxAdapter(
+            child: HookBuilder(builder: (context) {
+              useListenable(controller.dataStatus);
+              return switch (controller.dataStatus.value) {
+                _DataStatusFail(:final reason) => Column(
+                    children: [
+                      StringStoryService
+                              .instance.inAppEditorConfig.buildErrorWidget
+                              ?.call(reason) ??
+                          Text(reason.toString()),
+                      Padding(
+                        padding: PH_M,
+                        child: OutlinedButton(
+                          onPressed: () async {
+                            context
+                                .read<_SheetsController>()
+                                .submitTranslations();
+                          },
+                          child: Text(stringStoryPackageStrings.tryAgain),
+                        ),
+                      )
+                    ],
+                  ),
+                _DataStatusInProgress() => SheetInputHint(
+                    text: stringStoryPackageStrings.translationsAreUploaded,
+                    showSpinner: true,
+                  ),
+                (_) => const SizedBox(height: DimensionsDouble.xxl),
+              };
+            }),
+          ),
+          _bottomSafePadding,
+        ];
+      });
+}
+
+SliverWoltModalSheetPage _thankYou() {
+  return SliverWoltModalSheetPage(
+    isTopBarLayerAlwaysVisible: true,
+    topBarTitle: Text(stringStoryPackageStrings.allDone),
+    mainContentSliversBuilder: (context) => [
+      SliverToBoxAdapter(
+        child: Padding(
+          padding: P_M,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                stringStoryPackageStrings.thankYouHeadline,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: DimensionsDouble.xl),
+              ),
+              Text(
+                stringStoryPackageStrings.thankYouSecondLine,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+      _bottomSafePadding,
+    ],
+  );
+}
+
+class _LeadingButton extends HookWidget {
+  const _LeadingButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = context.read<_SheetsController>();
+    useListenable(controller.listenable);
+
+    return IconButton(
+      padding: P_M,
+      icon: Icon(controller.canGoBack() ? Icons.chevron_left : Icons.close),
+      onPressed: () async {
+        controller.goBack();
+      },
+    );
+  }
+}
+
+class _DiffWidget extends StatelessWidget {
+  const _DiffWidget({
+    required this.slangKey,
+  });
+
+  final String slangKey;
+
+  @override
+  Widget build(BuildContext context) {
+    final (before, after) = context.select((SlangEditorCubit cubit) {
+      final state = cubit.state;
+      return (state.ovSlangJson[slangKey], state.slangJson[slangKey]);
+    });
+
+    String pretty(dynamic value) {
+      if (value is Map) {
+        return const JsonEncoder.withIndent('  ').convert(value);
+      } else {
+        return value.toString();
+      }
+    }
+
+    return Padding(
+      padding: PH_M + PV_XS,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          StringStorySectionWidget(
+            slangKey,
+            padding: EdgeInsets.zero,
+          ),
+          SV_XS,
+          Row(
+            children: [
+              Expanded(
+                flex: 1,
+                child: Text(
+                  pretty(before),
+                  style: context.textStyles.labelMedium,
+                ),
+              ),
+              Icon(
+                Icons.arrow_forward,
+                size: DimensionsDouble.m,
+                color: context.colors.primaryFixedDim,
+              ),
+              SH_XS,
+              Expanded(
+                flex: 1,
+                child: Text(
+                  pretty(after),
+                  style: context.textStyles.labelMedium,
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  context.read<SlangEditorCubit>().resetKey(slangKey);
+                },
+                child: Icon(
+                  Icons.delete,
+                  size: DimensionsDouble.m,
+                  color: context.colors.error,
+                ),
+              )
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+Future<void> _submitTranslations({
+  required SlangBaseCubit slangBaseCubit,
+}) async {
+  final diffContent = await slangBaseCubit.exportDiffContent();
+
+  await StringStoryService.instance.inAppEditorConfig
+      .submitTranslations(diffContent, _slangStringsVersion);
+
+  slangBaseCubit.markSubmitted();
+}

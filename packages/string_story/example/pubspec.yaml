@@ -1,0 +1,24 @@
+name: string_story_example
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  slang: ^4.8.1
+  slang_flutter: ^4.8.0
+  string_story:
+    path: ../../string_story
+
+dev_dependencies:
+  string_story_utils:
+    path: ../../string_story_utils
+
+environment:
+  sdk: ">=3.0.6 <4.0.0"
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - lib/i18n/json/

@@ -1,0 +1,136 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: depend_on_referenced_packages
+
+import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:string_story_example/string_story/gen/string_story.dart';
+import 'package:string_story_example/i18n/strings.g.dart';
+
+class StringStorySelection extends Equatable {
+  const StringStorySelection({
+    required this.key,
+  });
+
+  final StringKey? key;
+
+  @override
+  List<Object?> get props => [
+        key,
+      ];
+
+  static StringStorySelection? maybeOf(BuildContext context) =>
+      context.read<StringStorySelection?>();
+}
+
+class StringStory extends Equatable {
+  const StringStory({
+    required this.keys,
+    required this.title,
+    required this.builder,
+  });
+
+  final List<StringKey> keys;
+  final String title;
+  final WidgetBuilder builder;
+
+  @override
+  List<Object?> get props => [keys, title];
+}
+
+class StringStoryApp extends StatelessWidget {
+  const StringStoryApp({
+    super.key,
+    required this.builder,
+    this.navigatorKey,
+    this.lightTheme,
+    this.darkTheme,
+    this.themeMode,
+  });
+
+  final WidgetBuilder builder;
+  final GlobalKey<NavigatorState>? navigatorKey;
+  final ThemeData? lightTheme;
+  final ThemeData? darkTheme;
+  final ThemeMode? themeMode;
+
+  @override
+  Widget build(BuildContext context) {
+    final localizationsDelegates = [
+      GlobalMaterialLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
+      GlobalCupertinoLocalizations.delegate,
+      _StringStoryDelegate(context.strings),
+    ];
+
+    return MaterialApp(
+      navigatorKey: navigatorKey,
+      theme: lightTheme ?? Theme.of(context),
+      darkTheme: darkTheme,
+      themeMode: themeMode,
+      debugShowCheckedModeBanner: false,
+      localizationsDelegates: localizationsDelegates,
+      supportedLocales: AppLocaleUtils.supportedLocales,
+      home: Builder(
+        builder: builder,
+      ),
+    );
+  }
+}
+
+class StringStoryAutoOpen extends StatelessWidget {
+  const StringStoryAutoOpen({
+    super.key,
+    required this.onOpen,
+    this.navigatorKey,
+  });
+
+  final void Function(BuildContext context) onOpen;
+  final GlobalKey<NavigatorState>? navigatorKey;
+
+  @override
+  Widget build(BuildContext _) {
+    return StringStoryApp(
+      navigatorKey: navigatorKey,
+      builder: (_) {
+        return Scaffold(
+          body: SafeArea(
+            child: HookBuilder(
+              builder: (context) {
+                final didOpen = useRef(false);
+
+                useEffect(() {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    onOpen(context);
+                    didOpen.value = true;
+                  });
+                  return null;
+                }, []);
+
+                return const SizedBox.shrink();
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _StringStoryDelegate extends LocalizationsDelegate<Translations> {
+  final S strings;
+
+  _StringStoryDelegate(this.strings);
+
+  @override
+  bool isSupported(Locale locale) => true;
+
+  @override
+  Future<Translations> load(Locale locale) async => strings;
+
+  @override
+  bool shouldReload(covariant LocalizationsDelegate<Translations> old) =>
+      old != this;
+}

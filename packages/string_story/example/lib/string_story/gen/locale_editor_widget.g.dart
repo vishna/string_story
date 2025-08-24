@@ -1,0 +1,691 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: depend_on_referenced_packages
+
+import 'package:collection/collection.dart';
+import 'package:flag/flag.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:string_story_example/string_story/gen/string_story.dart';
+import 'package:scrollview_observer/scrollview_observer.dart';
+import 'package:sliver_tools/sliver_tools.dart';
+import 'package:string_story/string_story.dart';
+import 'package:equatable/equatable.dart';
+
+class LocaleEditorWidget extends HookWidget {
+  const LocaleEditorWidget({
+    super.key,
+    required this.showScopedValues,
+    required this.isSearchAvailable,
+    this.searchFadeColors,
+    required this.onJsonPathSelected,
+  });
+
+  final bool showScopedValues;
+  final bool isSearchAvailable;
+  final List<Color>? searchFadeColors;
+  final ValueChanged<String> onJsonPathSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final editor = context.watch<SlangEditorCubit>();
+    final approvedKeys = context.select((SlangBaseCubit c) => c.state
+            .maybeMap(data: (it) => it.approvedKeys, orElse: () => null)) ??
+        <String>[];
+    final editorState = editor.state;
+    final displayAll = useState(!showScopedValues);
+    final focusProvider = useMemoized(() => _FocusProvider());
+    useEffect(() {
+      return () {
+        focusProvider.dispose();
+      };
+    }, [focusProvider]);
+
+    final sliverListCtx = useRef<BuildContext?>(null);
+    final scrollController = useScrollController();
+    final observerController = useMemoized(
+        () => SliverObserverController(controller: scrollController),
+        [scrollController]);
+
+    final slangJson = editorState.effectiveSlangJson(displayAll.value);
+    final keys = slangJson.stringKeys;
+
+    final selectedKey = useMemoized(() {
+      final normalized = editorState.selectedKey?.split(".").first;
+      return StringKey.values.firstWhereOrNull((it) => it.key == normalized);
+    }, [editorState.selectedKey]);
+
+    Future<void> scrollTo(StringKey stringKey) async {
+      final index = editor.state
+          .effectiveSlangJson(displayAll.value)
+          .stringKeys
+          .indexOf(stringKey);
+      if (index == -1) {
+        return;
+      }
+
+      await observerController.animateTo(
+        sliverContext: sliverListCtx.value,
+        index: index,
+        duration: Durations.medium1,
+        curve: Curves.easeInOut,
+        offset: (targetOffset) {
+          return isSearchAvailable
+              ? FloatingSearchBar.preferredHeight(context)
+              : 0;
+        },
+      );
+      if (editorState.searchResults.isEmpty) {
+        focusProvider.requestFocus(stringKey);
+      }
+    }
+
+    // scroll to key effect
+    useEffect(() {
+      final key = StringKey.values
+          .firstWhereOrNull((it) => it.key == editorState.scrollToKey);
+      if (key != null) {
+        scrollTo(key);
+      }
+
+      return null;
+    }, [editorState.scrollToKey]);
+
+    void move(int offset) {
+      final sk = selectedKey;
+      if (sk == null) {
+        return;
+      }
+      final index = keys.indexOf(sk);
+      if (index == -1) {
+        return;
+      }
+      final nextIndex = (index + offset) % keys.length;
+      final nextKey = keys[nextIndex];
+      focusProvider.obtain(nextKey.key).requestFocus();
+    }
+
+    void next() => move(1);
+
+    Widget itemBuilder(BuildContext context, int index) {
+      sliverListCtx.value = context;
+      final key = keys[index];
+      final value = slangJson[key.key];
+      final baseValue = editorState.baseValue(key.key);
+
+      final stringKeyStatus = StringKeyStatus(
+        isApproved: approvedKeys.contains(key.key),
+        isChanged: editorState.hasKeyChanged(key.key),
+        isSelected: selectedKey == key,
+        isSearched: editorState.searchResults.contains(key.key),
+      );
+
+      return _KeyWidget(
+        baseLanguageFlagCode: StringStoryService
+            .instance.generatedDelegate.baseLocale
+            .toFlagCode(),
+        stringKey: key,
+        stringKeyStatus: stringKeyStatus,
+        value: value,
+        baseValue: baseValue,
+        isMultiline: baseValue is String && baseValue.contains("\n"),
+        focusProvider: focusProvider,
+        next: next,
+        onJsonPathSelected: (jsonPath) {
+          editor.selectKey(jsonPath);
+          onJsonPathSelected(jsonPath);
+        },
+        onCommitValue: (jsonPath, value) {
+          final baseCubit = context.read<SlangBaseCubit>();
+          if (!jsonPath.contains(".")) {
+            baseCubit.applyChange({jsonPath: value});
+          }
+        },
+        approve: () {
+          final baseCubit = context.read<SlangBaseCubit>();
+          if (stringKeyStatus.isApproved) {
+            baseCubit.unapproveKey(key.key);
+          } else {
+            baseCubit.approveKey(key.key);
+            next();
+          }
+        },
+        reset: () {
+          if (stringKeyStatus.isApproved) {
+            final baseCubit = context.read<SlangBaseCubit>();
+            baseCubit.unapproveKey(key.key);
+          } else {
+            editor.resetKey(key.key);
+          }
+        },
+      );
+    }
+
+    return FocusTraversalGroup(
+      child: SliverViewObserver(
+        controller: observerController,
+        child: CustomScrollView(
+          controller: scrollController,
+          slivers: [
+            if (isSearchAvailable)
+              SliverPinnedHeader(
+                child: _KeySearchBar(
+                  searchFadeColors: searchFadeColors,
+                ),
+              ),
+            SliverList.builder(
+              itemBuilder: itemBuilder,
+              itemCount: keys.length,
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class StringKeyStatus extends Equatable {
+  const StringKeyStatus({
+    required this.isApproved,
+    required this.isChanged,
+    required this.isSelected,
+    required this.isSearched,
+  });
+
+  final bool isApproved;
+  final bool isChanged;
+  final bool isSelected;
+  final bool isSearched;
+
+  @override
+  List<Object?> get props => [
+        isApproved,
+        isChanged,
+        isSelected,
+        isSearched,
+      ];
+}
+
+extension StringKeyStatusExtension on StringKeyStatus {
+  Color asColor() {
+    if (isSearched) {
+      return Colors.blueAccent;
+    } else if (isChanged) {
+      return Colors.amberAccent;
+    } else if (isApproved) {
+      return Colors.lightGreenAccent;
+    } else if (isSelected) {
+      return Colors.blueGrey.withValues(alpha: 0.2);
+    }
+    return Colors.transparent;
+  }
+}
+
+abstract class _KeyWidgetBaseController {
+  final StringKey key;
+
+  _KeyWidgetBaseController({required this.key});
+
+  Object? getCommitValue();
+}
+
+class _KeyWidgetStringController extends _KeyWidgetBaseController {
+  _KeyWidgetStringController({required super.key});
+
+  TextEditingController? _controller;
+
+  void attach(TextEditingController controller) {
+    // ignore: unnecessary_this
+    this._controller = controller;
+  }
+
+  void detach() {
+    // ignore: unnecessary_this
+    this._controller = null;
+  }
+
+  @override
+  Object? getCommitValue() {
+    return _controller?.text;
+  }
+}
+
+class _KeyWidgetMapController extends _KeyWidgetBaseController {
+  _KeyWidgetMapController({required super.key});
+
+  final controllers = <String, _KeyWidgetStringController>{};
+
+  _KeyWidgetStringController getControllerForKey(String subKey) => controllers
+      .putIfAbsent(subKey, () => _KeyWidgetStringController(key: key));
+
+  void detach() {
+    controllers.clear();
+  }
+
+  @override
+  Object? getCommitValue() {
+    final keys = List<String>.from(controllers.keys)..sort();
+    if (keys.isEmpty) {
+      return null;
+    }
+
+    return {
+      for (final key in keys) key: controllers[key]!._controller!.text,
+    };
+  }
+}
+
+class _KeyWidget extends HookWidget {
+  _KeyWidget({
+    required this.stringKey,
+    required this.stringKeyStatus,
+    required this.value,
+    required this.baseValue,
+    required this.onJsonPathSelected,
+    required this.isMultiline,
+    required this.onCommitValue,
+    required this.focusProvider,
+    required this.next,
+    required this.reset,
+    required this.approve,
+    required this.baseLanguageFlagCode,
+  }) : super(key: ValueKey(stringKey));
+
+  final StringKey stringKey;
+  final StringKeyStatus stringKeyStatus;
+  final Object value;
+  final Object baseValue;
+  final bool isMultiline;
+
+  final ValueChanged<String> onJsonPathSelected;
+  final void Function(String jsonPath, Object value) onCommitValue;
+  final _FocusProvider focusProvider;
+  final VoidCallback next;
+  final VoidCallback reset;
+  final VoidCallback approve;
+  final FlagsCode baseLanguageFlagCode;
+
+  @override
+  Widget build(BuildContext context) {
+    final value = this.value;
+    final backgroundColor = stringKeyStatus.asColor();
+
+    final controller = useMemoized(() {
+      if (value is String) {
+        return _KeyWidgetStringController(key: stringKey);
+      } else {
+        return _KeyWidgetMapController(key: stringKey);
+      }
+    }, [stringKey]);
+
+    void wrappedApprove() {
+      final value = controller.getCommitValue();
+      if (value != null) {
+        onCommitValue(stringKey.key, value);
+      }
+      approve();
+    }
+
+    return Stack(
+      children: [
+        Column(
+          children: [
+            SV_S,
+            ExpandableWidget(
+              expand: stringKeyStatus.isSelected,
+              child: Column(
+                children: [
+                  _TranslationBubble(
+                    text: baseValue.toString(),
+                    showFlag: true,
+                    baseLanguageFlagCode: baseLanguageFlagCode,
+                  ),
+                  SV_XS,
+                  IgnoreFocus(
+                    child: Row(
+                      children: [
+                        SH_M,
+                        const Spacer(),
+                        if (stringKeyStatus.isChanged ||
+                            stringKeyStatus.isApproved)
+                          TextButton(
+                            onPressed: reset,
+                            child: Text(stringStoryPackageStrings.reset),
+                          ),
+                        if (!stringKeyStatus.isApproved &&
+                            !stringKeyStatus.isChanged)
+                          TextButton(
+                            onPressed: wrappedApprove,
+                            child: Text(stringStoryPackageStrings.approve),
+                          ),
+                        SH_M
+                      ],
+                    ),
+                  ),
+                  SV_SM,
+                ],
+              ),
+            ),
+            if (value is String)
+              Padding(
+                padding: PH_M,
+                child: _StringKeyWidget(
+                  controller: controller as _KeyWidgetStringController,
+                  jsonPath: stringKey.key,
+                  value: value,
+                  onJsonPathSelected: onJsonPathSelected,
+                  isMultiline: isMultiline,
+                  focusProvider: focusProvider,
+                  onCommitValue: (value) => onCommitValue(
+                    stringKey.key,
+                    value,
+                  ),
+                  onSubmit: next,
+                ),
+              ),
+            if (value is Map<String, dynamic>)
+              _MapKeyWidget(
+                controller: controller as _KeyWidgetMapController,
+                jsonPath: stringKey.key,
+                value: value,
+                onJsonPathSelected: onJsonPathSelected,
+                focusProvider: focusProvider,
+                onCommitValue: (value) => onCommitValue(
+                  stringKey.key,
+                  value,
+                ),
+              ),
+            SV_S,
+          ],
+        ),
+        Positioned(
+          top: 0,
+          bottom: 0,
+          left: 0,
+          child: SizedBox(
+            width: DimensionsDouble.s,
+            child: ColoredBox(
+              color: backgroundColor,
+            ),
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class _MapKeyWidget extends HookWidget {
+  _MapKeyWidget({
+    required this.jsonPath,
+    required this.value,
+    required this.onJsonPathSelected,
+    required this.focusProvider,
+    required this.onCommitValue,
+    required this.controller,
+  }) : super(key: ValueKey(jsonPath));
+
+  final String jsonPath;
+  final Map<String, dynamic> value;
+  final ValueChanged<String> onJsonPathSelected;
+  final _FocusProvider focusProvider;
+  final ValueChanged<Map<String, dynamic>> onCommitValue;
+  final _KeyWidgetMapController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final keys = useMemoized(() => List<String>.from(value.keys)..sort(), []);
+
+    useEffect(() {
+      // no attaching function here, but we should still detach
+      return () {
+        controller.detach();
+      };
+    });
+
+    return Padding(
+      padding: P_M,
+      child: InputDecorator(
+        decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+          labelText: jsonPath.split(".").last,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: DimensionsDouble.sm,
+          children: [
+            for (final key in keys)
+              _StringKeyWidget(
+                controller: controller.getControllerForKey(key),
+                jsonPath: "$jsonPath.$key",
+                value: value[key],
+                onJsonPathSelected: onJsonPathSelected,
+                isMultiline: false,
+                onCommitValue: (v) {
+                  final copy = Map<String, dynamic>.from(value);
+                  copy[key] = v;
+                  onCommitValue(copy);
+                },
+                focusProvider: focusProvider,
+                onSubmit: () {},
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _StringKeyWidget extends HookWidget {
+  _StringKeyWidget({
+    required this.jsonPath,
+    required this.value,
+    required this.onJsonPathSelected,
+    required this.isMultiline,
+    required this.onCommitValue,
+    required this.focusProvider,
+    required this.onSubmit,
+    required this.controller,
+  }) : super(key: ValueKey(jsonPath));
+
+  final String jsonPath;
+  final String value;
+  final ValueChanged<String> onJsonPathSelected;
+  final ValueChanged<String> onCommitValue;
+  final bool isMultiline;
+  final _FocusProvider focusProvider;
+  final VoidCallback onSubmit;
+  final _KeyWidgetStringController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final textController = useTextEditingController(text: value);
+
+    useEffect(() {
+      controller.attach(textController);
+      return () {
+        controller.detach();
+      };
+    });
+
+    final focusNode = focusProvider.obtain(jsonPath);
+    void commitValue() {
+      if (textController.text != value) {
+        onCommitValue(textController.text);
+      }
+    }
+
+    useEffect(() {
+      if (textController.text != value) {
+        textController.value = textController.value.copyWith(text: value);
+      }
+      return null;
+    }, [value]);
+
+    useEffect(() {
+      void onFocusChange() {
+        if (focusNode.hasFocus) {
+          onJsonPathSelected(jsonPath);
+        } else {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            // Only commit if focus moved to another text field
+            final primaryFocus = FocusManager.instance.primaryFocus;
+            if (!focusNode.hasFocus && focusProvider.isManaged(primaryFocus)) {
+              commitValue();
+            }
+          });
+        }
+      }
+
+      focusNode.addListener(onFocusChange);
+      return () {
+        focusNode.removeListener(onFocusChange);
+      };
+    }, [focusNode]);
+
+    return TextField(
+      maxLines: null,
+      textInputAction:
+          isMultiline ? TextInputAction.newline : TextInputAction.next,
+      focusNode: focusNode,
+      controller: textController,
+      decoration: InputDecoration(
+        border: const OutlineInputBorder(),
+        labelText: jsonPath.split(".").last,
+      ),
+      onSubmitted: (_) {
+        commitValue();
+        onSubmit();
+      },
+    );
+  }
+}
+
+class _TranslationBubble extends StatelessWidget {
+  const _TranslationBubble({
+    required this.text,
+    required this.showFlag,
+    required this.baseLanguageFlagCode,
+  });
+
+  final String text;
+  final bool showFlag;
+
+  final FlagsCode baseLanguageFlagCode;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: PH_M,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: context.colors.primaryContainer,
+          borderRadius: Radii.borderS,
+        ),
+        child: Padding(
+          padding: P_XS,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: FlagBall(
+                  flagCode: baseLanguageFlagCode,
+                  size: DimensionsDouble.m,
+                ),
+              ),
+              SH_S,
+              Expanded(
+                child: Text(text),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FocusProvider {
+  final _nodes = <String, FocusNode>{};
+
+  void requestFocus(StringKey stringKey) {
+    _nodes[stringKey.key]?.requestFocus();
+  }
+
+  bool isManaged(FocusNode? focusNode) => _nodes.containsValue(focusNode);
+
+  FocusNode obtain(String jsonPath) =>
+      _nodes.putIfAbsent(jsonPath, () => FocusNode(debugLabel: jsonPath));
+
+  void dispose() {
+    for (final node in _nodes.values) {
+      node.dispose();
+    }
+  }
+}
+
+extension _SlangEditorState on SlangEditorState {
+  Map<String, dynamic> effectiveSlangJson(bool displayAll) =>
+      displayAll ? slangJson : slangScopedJson;
+}
+
+extension _Keys on Map<String, dynamic> {
+  List<StringKey> get stringKeys => keys
+      .map((slangJsonKey) =>
+          StringKey.values.firstWhereOrNull((it) => it.key == slangJsonKey))
+      .nonNulls
+      .toList();
+}
+
+class _KeySearchBar extends HookWidget {
+  const _KeySearchBar({
+    this.searchFadeColors,
+  });
+
+  final List<Color>? searchFadeColors;
+
+  @override
+  Widget build(BuildContext context) {
+    final cubit = context.watch<SlangEditorCubit>();
+    final state = cubit.state;
+    final hasMultipleSearchResults = state.searchResults.length > 1;
+
+    int current = (state.currentSearchIndex() + 1);
+    int total = state.searchResults.length;
+
+    return FloatingSearchBar(
+      initialValue: "",
+      onInputUpdate: cubit.search,
+      fadeColors: searchFadeColors,
+      suffixIcon: AnimatedOpacity(
+        opacity: hasMultipleSearchResults ? 1.0 : 0.0,
+        duration: Durations.short4,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("$current / $total"),
+            IconButton(
+              onPressed: hasMultipleSearchResults
+                  ? () => cubit.moveSearchResult(-1)
+                  : null,
+              icon: const RotatedBox(
+                quarterTurns: -1,
+                child: Icon(Icons.chevron_right),
+              ),
+            ),
+            IconButton(
+              onPressed: hasMultipleSearchResults
+                  ? () => cubit.moveSearchResult(1)
+                  : null,
+              icon: const RotatedBox(
+                quarterTurns: 1,
+                child: Icon(Icons.chevron_right),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}

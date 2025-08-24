@@ -1,0 +1,9 @@
+.idea/
+*.iml
+build/
+node_modules
+/package-lock.json
+packages/string_story/example/macos
+packages/string_story/example/devtools_options.yaml
+packages/string_story_utils/test/test.env
+packages/string_story/example/.env

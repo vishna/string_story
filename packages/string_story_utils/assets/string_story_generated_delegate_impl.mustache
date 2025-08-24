@@ -1,0 +1,29 @@
+import 'dart:ui';
+
+import 'package:{{packageName}}/{{{stringStory}}}/string_story.dart';
+import 'package:string_story/string_story.dart';
+
+class StringStoryGeneratedDelegateImpl extends StringStoryGeneratedDelegate {
+  @override
+  Future<void> preload(Locale locale) async {
+    await SlangDelegate.delegate.load(locale);
+  }
+
+  @override
+  void validateStateData(SlangBaseStateData state) {
+    state.asSlangDelegate();
+  }
+
+  @override
+  List<String> get permittedKeys =>
+      StringKey.values.map((it) => it.key).toList();
+
+  @override
+  int get versionCode => {{versionCode}};
+
+  @override
+  String get jsonAssetsPath => "{{{jsonAssetsPath}}}";
+
+  @override
+  String get baseLocale => "{{baseLocale}}";
+}

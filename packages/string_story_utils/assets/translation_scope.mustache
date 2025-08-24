@@ -1,0 +1,96 @@
+// ignore_for_file: depend_on_referenced_packages
+
+import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:{{packageName}}/{{{i18n}}}/strings.g.dart';
+import 'package:{{packageName}}/{{{stringStory}}}/string_story.dart';
+import 'package:slang/generated.dart';
+import 'package:provider/provider.dart';
+
+class TranslationScopeKeys {
+  TranslationScopeKeys({this.onAdd});
+
+  final void Function(String)? onAdd;
+  final _paths = <String>{};
+
+  void add(String key) {
+    _paths.add(key);
+    onAdd?.call(key);
+  }
+
+  Set<String> get value => Set<String>.of(_paths);
+
+  static TranslationScopeKeys? of(BuildContext context) =>
+      context.read<TranslationScopeKeys?>();
+}
+
+class TranslationScope extends HookWidget {
+  const TranslationScope({
+    super.key,
+    this.isEnabled = true,
+    required this.child,
+    this.scopeKeys,
+    this.debugLabel,
+  });
+
+  final bool isEnabled;
+  final Widget child;
+  final TranslationScopeKeys? scopeKeys;
+  final String? debugLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!isEnabled) {
+      return child;
+    }
+
+    final translations = context.strings;
+    final meta = translations.$meta;
+    final effectiveScopeKeys = scopeKeys ?? TranslationScopeKeys();
+
+    final metaSpy = SpyTranslationMetadata(
+      debugLabel: debugLabel,
+      locale: meta.locale,
+      overrides: meta.overrides,
+      cardinalResolver: meta.cardinalResolver,
+      ordinalResolver: meta.ordinalResolver,
+      onPathAccessed: (path) {
+        effectiveScopeKeys.add(path);
+      },
+    );
+
+    return Localizations.override(
+      context: context,
+      delegates: [
+        SlangDelegate(
+          overrideTranslation: translations.$copyWith(meta: metaSpy),
+        )
+      ],
+      child: Provider.value(
+        value: effectiveScopeKeys,
+        child: child,
+      ),
+    );
+  }
+}
+
+class SpyTranslationMetadata
+    extends TranslationMetadata<AppLocale, Translations> {
+  SpyTranslationMetadata({
+    this.debugLabel,
+    required super.locale,
+    required super.overrides,
+    required super.cardinalResolver,
+    required super.ordinalResolver,
+    required this.onPathAccessed,
+  });
+
+  final String? debugLabel;
+  final void Function(String) onPathAccessed;
+
+  @override
+  Node? getOverride(String path) {
+    onPathAccessed(path);
+    return super.getOverride(path);
+  }
+}

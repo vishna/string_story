@@ -1,0 +1,16 @@
+{
+  "aboutBtn": "About",
+  "aboutText": "This is a sample app using String Story.",
+  "aboutTitle": "About",
+  "changeLanguage": "Change Language",
+  "developerMode": "Developer Mode",
+  "homeTitle": "Home",
+  "localeEditor": "Locale Editor",
+  "settingsBtn": "Settings",
+  "settingsText": "Change your preferences here.",
+  "settingsTitle": "Settings",
+  "snackbarMessage": "Translation changes copied to clipboard.",
+  "sorry": "Sorry",
+  "stringStoryEditor": "String Story Editor",
+  "welcome": "Welcome to String Story!"
+}

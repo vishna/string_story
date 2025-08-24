@@ -1,0 +1,813 @@
+// ignore_for_file: depend_on_referenced_packages
+
+import 'package:collection/collection.dart';
+import 'package:device_frame/device_frame.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:{{packageName}}/{{{stringStory}}}/string_story.dart';
+import 'package:provider/provider.dart';
+import 'package:string_story/string_story.dart';
+
+class StringStoryScreen extends HookWidget {
+  const StringStoryScreen({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    useEffect(() {
+      StringStoryService.instance.inAppEditorConfig.onEnter?.call();
+      return StringStoryService.instance.inAppEditorConfig.onExit;
+    }, []);
+
+    return BlocProvider(
+      create: (context) {
+        return SlangEditorCubit(
+          baseCubit: context.read<SlangBaseCubit>(),
+          scopedKeys: {},
+          ovLocale: StringStoryService.instance.config.appLanguageCode,
+        );
+      },
+      child: const _Panes(),
+    );
+  }
+}
+
+class _Panes extends HookWidget {
+  const _Panes();
+
+  @override
+  Widget build(BuildContext context) {
+    final shared = useMemoized(() => _Shared(context.read()));
+    useEffect(() {
+      return () {
+        shared.dispose();
+      };
+    }, [shared]);
+
+    final logPaneBuilder =
+        StringStoryService.instance.inAppEditorConfig.developerLogPaneBuilder;
+
+    return Provider.value(
+      value: shared,
+      child: HookBuilder(builder: (context) {
+        final isReporting = useListenable(shared.isReporting).value;
+        if (isReporting) {
+          return Scaffold(
+            body: Row(
+              children: [
+                Flexible(
+                  child: _Content(
+                    isMobile: false,
+                    key: shared.contentKey,
+                  ),
+                ),
+                Flexible(
+                    child: logPaneBuilder != null
+                        ? Builder(builder: logPaneBuilder)
+                        : const Placeholder())
+              ],
+            ),
+          );
+        }
+
+        return StringStoryAdaptiveLayout(
+          mobile: (_) => const _MobileContent(),
+          desktop: (_) => Scaffold(
+            body: StringStoryGoldenPanes(
+                flipped: false,
+                showDivider: true,
+                smallerPane: _KeysTree(
+                  key: shared.keysTreeKey,
+                ),
+                biggerPane: _Content(
+                  isMobile: false,
+                  key: shared.contentKey,
+                )),
+          ),
+        );
+      }),
+    );
+  }
+}
+
+class _KeysTree extends HookWidget {
+  const _KeysTree({
+    required super.key,
+    this.searchFadeColors,
+  });
+
+  final List<Color>? searchFadeColors;
+
+  @override
+  Widget build(BuildContext context) {
+    final shared = context.read<_Shared>();
+    final ValueNotifier<_StoryState?> state = shared.state;
+    useListenable(state);
+
+    return LocaleEditorWidget(
+      key: shared.localeEditorKey,
+      isSearchAvailable: true,
+      showScopedValues: false,
+      searchFadeColors: searchFadeColors,
+      onJsonPathSelected: (value) {
+        final selectedStringKey = StringKeyExt.fromString(value);
+        shared.setActiveStory(key: selectedStringKey);
+
+        context
+            .read<SlangBaseCubit>()
+            .setLastSelectedKey(selectedStringKey?.key);
+      },
+    );
+  }
+}
+
+class _Content extends HookWidget {
+  const _Content({
+    required super.key,
+    required this.isMobile,
+  });
+
+  final bool isMobile;
+
+  @override
+  Widget build(BuildContext context) {
+    final shared = context.read<_Shared>();
+
+    final state = useListenable(shared.state).value;
+    final isReporting = useListenable(shared.isReporting).value;
+
+    final showControls = (state?.showControls ?? false) && !isReporting;
+
+    final globalKey = useMemoized(() => GlobalKey(), [
+      state?.effectiveStringStory,
+      state?.activeKey,
+      state?.refreshCounter,
+    ]);
+
+    void prev() {
+      shared.state.value = shared.state.value?.prev();
+    }
+
+    void next() {
+      shared.state.value = shared.state.value?.next();
+    }
+
+    final disablePreviewFocus =
+        context.select((SlangEditorCubit c) => c.state.disablePreviewFocus);
+
+    return Provider<StringStorySelection>.value(
+      value: StringStorySelection(key: state?.activeKey),
+      child: Column(
+        children: [
+          if (!isMobile) ...[
+            const _AppBar(),
+            SV_S,
+          ],
+          Center(child: Text(shared.state.value?.effectiveTitle ?? "")),
+          SV_XS,
+          Expanded(
+            child: DeviceFrame(
+              device: Devices.ios.iPhone13,
+              screen: InkWell(
+                onTap: disablePreviewFocus
+                    ? () {
+                        context.read<SlangEditorCubit>().enableFocusPreview();
+                      }
+                    : null,
+                onLongPress: () {
+                  shared.currentReport();
+                },
+                child: IgnoreFocus(
+                  ignoring: disablePreviewFocus,
+                  child: IgnorePointer(
+                    ignoring: disablePreviewFocus,
+                    child: ColoredBox(
+                      color: context.colors.surface,
+                      child: TranslationScope(
+                        key: ValueKey(
+                            state?.effectiveStringStory?.title ?? "NO STORY"),
+                        debugLabel:
+                            state?.effectiveStringStory?.title ?? "NO STORY",
+                        scopeKeys: shared.getScopeKeysByStringStory(
+                            state?.effectiveStringStory),
+                        child: Builder(
+                          key: globalKey,
+                          builder: state?.effectiveStringStory?.builder ??
+                              _emptyPathState,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (showControls)
+                IconButton(
+                    onPressed: prev, icon: const Icon(Icons.chevron_left)),
+              SH_XL,
+              IconButton(
+                  onPressed: shared.refresh, icon: const Icon(Icons.refresh)),
+              SH_XL,
+              if (showControls)
+                IconButton(
+                    onPressed: next, icon: const Icon(Icons.chevron_right)),
+            ],
+          ),
+          SV_S,
+        ],
+      ),
+    );
+  }
+}
+
+Widget _emptyPathState(BuildContext context) {
+  final stringStoryKey = context.read<StringStorySelection>().key;
+
+  if (stringStoryKey == null) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: P_M,
+          child: HelpTranslateCard(
+            title: stringStoryPackageStrings.howtoTranslateTitle,
+            message: stringStoryPackageStrings.howtoTranslateMessage,
+          ),
+        )
+      ],
+    );
+  }
+
+  return Center(
+    child: SheetInputHint(
+      text: stringStoryPackageStrings.noStoryFor(stringStoryKey.name),
+    ),
+  );
+}
+
+class _MobileContent extends HookWidget {
+  const _MobileContent();
+
+  @override
+  Widget build(BuildContext context) {
+    final shared = context.read<_Shared>();
+
+    useEffect(() {
+      shared.mobileTab.value = _MobileTabs.keys;
+      return null;
+    }, []);
+
+    return Scaffold(
+      appBar: const _AppBar(),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final cellWidth = constraints.maxWidth;
+          return SingleChildScrollView(
+            controller: shared.scrollController,
+            physics: const NeverScrollableScrollPhysics(),
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                SizedBox(
+                  width: cellWidth,
+                  child: _KeysTree(
+                    key: shared.keysTreeKey,
+                    searchFadeColors: [
+                      context.colors.surface,
+                      context.colors.surface.withAlpha(0)
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  width: cellWidth,
+                  child: _Content(
+                    isMobile: true,
+                    key: shared.contentKey,
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+      floatingActionButton: const _Fab(),
+    );
+  }
+}
+
+class _AppBar extends HookWidget implements PreferredSizeWidget {
+  const _AppBar();
+
+  @override
+  Widget build(BuildContext context) {
+    final shared = context.read<_Shared>();
+    final isDeveloper = StringStoryService.instance.config.isDeveloper;
+    useListenable(shared.state);
+    final isReporting = useListenable(shared.isReporting).value;
+
+    final canPop = Navigator.of(context).canPop();
+    return StringStoryAppBar(
+      leading: canPop
+          ? Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (!isReporting) const StringStoryAppBarLeading(),
+                if (isDeveloper && !isReporting) SH_XS,
+                if (isDeveloper)
+                  IconButton(
+                    onPressed: () {
+                      if (!shared.isReporting.value) {
+                        shared.play();
+                      } else {
+                        shared.stop();
+                      }
+                    },
+                    icon: const Icon(Icons.bug_report),
+                  ),
+              ],
+            )
+          : OutlinedButton(
+              onPressed:
+                  StringStoryService.instance.inAppEditorConfig.onTryTheApp,
+              child: Text(stringStoryPackageStrings.tryTheApp),
+            ),
+      progressWidget: isReporting
+          ? const _InspectorProgressIndicator()
+          : const _StringsProgressIndicator(),
+      title: isReporting
+          ? ""
+          : context.select((SlangEditorCubit c) {
+              if (c.state.progress == 0.0) {
+                return "";
+              }
+              if (c.state.progress == 1.0) {
+                return stringStoryPackageStrings.allDoneExclamation;
+              }
+              return stringStoryPackageStrings.percentCompleted(
+                  (c.state.progress * 100).toStringAsFixed(2));
+            }),
+      trailing: isReporting
+          ? null
+          : OutlinedButton(
+              onPressed: () {
+                LocaleSubmitSheet.show(
+                  context,
+                  editorCubit: context.read(),
+                  baseCubit: context.read(),
+                );
+              },
+              child: Text(stringStoryPackageStrings.submit),
+            ),
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(DimensionsDouble.xxl);
+}
+
+class _StringsProgressIndicator extends HookWidget {
+  const _StringsProgressIndicator();
+
+  @override
+  Widget build(BuildContext context) {
+    final slangEditor = context.watch<SlangEditorCubit>();
+    final editorState = slangEditor.state;
+    final approvedKeys = context.select((SlangBaseCubit c) => c.state
+            .maybeMap(data: (it) => it.approvedKeys, orElse: () => null)) ??
+        <String>[];
+    final selectedKey = useMemoized(() {
+      final normalized = editorState.selectedKey?.split(".").first;
+      return StringKey.values.firstWhereOrNull((it) => it.key == normalized);
+    }, [editorState.selectedKey]);
+    final keyStatuses = StringKey.values.map((key) => StringKeyStatus(
+          isApproved: approvedKeys.contains(key.key),
+          isChanged: editorState.hasKeyChanged(key.key),
+          isSelected: selectedKey == key,
+          isSearched: editorState.searchResults.contains(key.key),
+        ));
+
+    return _ProgressIndicator(keyStatuses.map((it) => it.asColor()).toList());
+  }
+}
+
+class _InspectorProgressIndicator extends HookWidget {
+  const _InspectorProgressIndicator();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors =
+        useListenable(context.read<_Shared>().reportersIndicator).value;
+
+    return _ProgressIndicator(colors);
+  }
+}
+
+class _ProgressIndicator extends HookWidget {
+  const _ProgressIndicator(this.colors);
+
+  static const height = DimensionsDouble.s;
+  final List<Color> colors;
+
+  @override
+  Widget build(BuildContext context) {
+    final defaultColor = context.colors.onSurface.withValues(alpha: 0.2);
+    return SizedBox(
+      height: height,
+      width: double.infinity,
+      child: ClipRRect(
+        borderRadius: const BorderRadius.all(
+          Radius.circular(DimensionsDouble.s / 2),
+        ),
+        child: Stack(
+          children: [
+            Positioned.fill(child: ColoredBox(color: defaultColor)),
+            Positioned.fill(child: _ColorsProgressBar(colors: colors))
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ColorsProgressBar extends StatelessWidget {
+  final List<Color> colors;
+
+  const _ColorsProgressBar({required this.colors});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      painter: _ColorsProgressBarPainter(colors: colors),
+    );
+  }
+}
+
+class _ColorsProgressBarPainter extends CustomPainter {
+  final List<Color> colors;
+
+  _ColorsProgressBarPainter({required this.colors});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    double barWidth = size.width / colors.length;
+
+    for (int i = 0; i < colors.length; i++) {
+      final paint = Paint()
+        ..color = colors[i]
+        ..style = PaintingStyle.fill;
+
+      canvas.drawRect(
+        // Add a small overlap to eliminate the lines
+        Rect.fromLTWH(i * barWidth, 0, barWidth * 1.1, size.height),
+        paint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
+  }
+}
+
+class _StoryState {
+  final StringKey activeKey;
+  final List<StringStory> availableStories;
+  final int selectedStoryIndex;
+  final int refreshCounter;
+
+  _StoryState({
+    required this.activeKey,
+    required this.availableStories,
+    required this.selectedStoryIndex,
+    required this.refreshCounter,
+  });
+
+  bool get showControls => availableStories.length > 1;
+  StringStory? get effectiveStringStory =>
+      availableStories.isEmpty ? null : availableStories[selectedStoryIndex];
+  String get effectiveTitle => effectiveStringStory?.title ?? "";
+
+  _StoryState next() {
+    if (selectedStoryIndex < availableStories.length - 1) {
+      return copyWith(selectedStoryIndex: selectedStoryIndex + 1);
+    } else {
+      return copyWith(selectedStoryIndex: 0);
+    }
+  }
+
+  _StoryState prev() {
+    if (selectedStoryIndex > 0) {
+      return copyWith(selectedStoryIndex: selectedStoryIndex - 1);
+    } else {
+      return copyWith(selectedStoryIndex: availableStories.length - 1);
+    }
+  }
+
+  _StoryState refresh() {
+    return copyWith(refreshCounter: refreshCounter + 1);
+  }
+
+  _StoryState copyWith({
+    StringKey? activeKey,
+    List<StringStory>? availableStories,
+    int? selectedStoryIndex,
+    int? refreshCounter,
+  }) =>
+      _StoryState(
+        activeKey: activeKey ?? this.activeKey,
+        availableStories: availableStories ?? this.availableStories,
+        selectedStoryIndex: selectedStoryIndex ?? this.selectedStoryIndex,
+        refreshCounter: refreshCounter ?? this.refreshCounter,
+      );
+}
+
+class _Shared {
+  _Shared(this.editor);
+  final keysTreeKey = GlobalKey();
+  final contentKey = GlobalKey();
+  final localeEditorKey = GlobalKey();
+  final state = ValueNotifier<_StoryState?>(null);
+
+  final stringStoriesMemoized = stringStories();
+
+  final scrollController = ScrollController();
+  final mobileTab = ValueNotifier(_MobileTabs.keys);
+  final reportersIndicator = ValueNotifier<List<Color>>([]);
+
+  final _reporters = <StringStory, _StoryReporter>{};
+  final isReporting = ValueNotifier(false);
+  final SlangEditorCubit editor;
+
+  void refresh() {
+    state.value = state.value?.refresh();
+  }
+
+  void currentReport() {
+    final reporter = _reporters[state.value?.effectiveStringStory];
+    if (reporter == null) {
+      _log.e("currentReport() : Could not find a reporter");
+      return;
+    }
+    reporter.logReport();
+  }
+
+  _StoryState create(StringKey key) {
+    final availableStories =
+        stringStoriesMemoized.where((it) => it.keys.contains(key)).toList();
+
+    return _StoryState(
+      activeKey: key,
+      availableStories: availableStories,
+      selectedStoryIndex: 0,
+      refreshCounter: 0,
+    );
+  }
+
+  void setActiveStory({
+    StringKey? key,
+  }) {
+    if (key == null) {
+      state.value = null;
+      return;
+    }
+
+    state.value = create(key);
+  }
+
+  TranslationScopeKeys? getScopeKeysByStringStory(StringStory? story) {
+    if (story == null) {
+      return null;
+    }
+
+    var reporter = _reporters[story];
+    if (reporter == null) {
+      reporter = _StoryReporter(
+        title: story.title,
+        expected: Set.from(story.keys),
+      );
+      _reporters[story] = reporter;
+    }
+
+    return reporter.keys;
+  }
+
+  void moveToMobileTab(_MobileTabs tab) {
+    switch (tab) {
+      case _MobileTabs.keys:
+        scrollController.jumpTo(0);
+      case _MobileTabs.preview:
+        scrollController.jumpTo(scrollController.position.maxScrollExtent);
+        refresh();
+    }
+    mobileTab.value = tab;
+  }
+
+  void _computeReporterColors() {
+    final colors = stringStoriesMemoized.map((it) => _reporters[it]).map((it) {
+      if (it == null || !it.gotCalled) {
+        return Colors.transparent;
+      }
+      if (it.missingKeys().isNotEmpty) {
+        return Colors.amberAccent;
+      }
+      return Colors.greenAccent;
+    }).toList();
+    reportersIndicator.value = colors;
+  }
+
+  void dispose() {
+    scrollController.dispose();
+    isReporting.value = false;
+  }
+
+  Future<void> stop() async {
+    isReporting.value = false;
+  }
+
+  static const kStepDuration = Duration(milliseconds: 300);
+
+  Future<void> play() async {
+    _computeReporterColors();
+    isReporting.value = true;
+
+    // clear stage
+    state.value = null;
+    await Future.delayed(kStepDuration);
+    _reporters.forEach((_, it) => it.clear());
+
+    switchTo(StringStory story, {StringKey? preferredKey}) {
+      final effectiveKey = preferredKey ?? story.keys.first;
+      var nextState = create(effectiveKey);
+      assert(story.keys.contains(effectiveKey));
+      final index = nextState.availableStories.indexOf(story);
+      if (index != -1) {
+        nextState = nextState.copyWith(selectedStoryIndex: index);
+      }
+      state.value = nextState;
+    }
+
+    // iterate over each story
+    for (final story in stringStoriesMemoized) {
+      if (!isReporting.value) {
+        return;
+      }
+      switchTo(story);
+      await Future.delayed(kStepDuration);
+      final reporter = _reporters[story];
+      if (reporter == null) {
+        isReporting.value = false;
+        _log.e(
+            "Something went wrong - could not find reporter for ${story.title}");
+        return;
+      }
+
+      final missingKeys = reporter.missingKeys();
+      for (final missingKey in missingKeys) {
+        if (reporter.missingKeys().isEmpty) {
+          break;
+        }
+        if (!isReporting.value) {
+          return;
+        }
+        switchTo(story, preferredKey: missingKey);
+        await Future.delayed(kStepDuration);
+      }
+      _computeReporterColors();
+      reporter.logReport();
+    }
+
+    // log summary
+    final totalStories = stringStoriesMemoized.length;
+    final okStories =
+        _reporters.values.where((it) => it.missingKeys().isEmpty).length;
+    final storiesWithMissingKeys = _reporters.values
+        .where((it) => it.missingKeys().isNotEmpty && it.gotCalled);
+    final storiesNotCalled =
+        _reporters.values.where((it) => it.gotCalled == false);
+
+    final sb = StringBuffer()
+      ..writeln()
+      ..writeln("Total Stories: $totalStories")
+      ..writeln("OK Stories: $okStories");
+
+    if (storiesWithMissingKeys.isNotEmpty) {
+      sb.writeln("Stories With Missing Keys: ${storiesWithMissingKeys.length}");
+      for (final story in storiesWithMissingKeys) {
+        sb.writeln("  - ${story.title}");
+      }
+    }
+
+    if (storiesNotCalled.isNotEmpty) {
+      sb.writeln("Stories Not Called: ${storiesNotCalled.length}");
+      for (final story in storiesNotCalled) {
+        sb.writeln("  - ${story.title}");
+      }
+    }
+    _log.i(sb.toString());
+  }
+}
+
+enum _MobileTabs { keys, preview }
+
+class _Fab extends HookWidget {
+  const _Fab();
+
+  @override
+  Widget build(BuildContext context) {
+    final shared = context.read<_Shared>();
+    useListenable(shared.mobileTab);
+    return FloatingActionButton.small(
+      onPressed: () {
+        final nextTab = switch (shared.mobileTab.value) {
+          _MobileTabs.keys => _MobileTabs.preview,
+          _MobileTabs.preview => _MobileTabs.keys,
+        };
+        shared.moveToMobileTab(nextTab);
+      },
+      child: Icon(
+        switch (shared.mobileTab.value) {
+          _MobileTabs.keys => Icons.phone_android_outlined,
+          _MobileTabs.preview => Icons.edit,
+        },
+      ),
+    );
+  }
+}
+
+final _log = StringStoryLogger("StoryReport");
+
+class _StoryReporter {
+  _StoryReporter({
+    required this.title,
+    required this.expected,
+  });
+  final String title;
+  late final TranslationScopeKeys keys = TranslationScopeKeys(onAdd: onAdd);
+  final Set<StringKey> expected;
+  final occured = <StringKey>{};
+  var gotCalled = false;
+
+  void clear() {
+    gotCalled = false;
+    occured.clear();
+  }
+
+  Set<StringKey> missingKeys() =>
+      Set<StringKey>.from(expected)..removeAll(occured);
+
+  void onAdd(String value) {
+    final stringKey = StringKeyExt.fromString(value);
+    if (stringKey == null) {
+      _log.d("[$title] didn't find a StringKey enum for $value");
+      return;
+    }
+    occured.add(stringKey);
+    gotCalled = true;
+  }
+
+  void logReport() {
+    final report = this;
+    final missingKeys = this.missingKeys();
+    final overReported = Set<StringKey>.from(report.occured)
+      ..removeAll(report.expected);
+    final isMissingKeys = missingKeys.isNotEmpty;
+    final hasOverReported = overReported.isNotEmpty;
+
+    final sb = StringBuffer();
+    sb.writeln([report.title]);
+    sb.writeln("  occured: ${occured.length}");
+    sb.writeln("  expected: ${expected.length}");
+
+    if (isMissingKeys) {
+      sb.writeln("  missing: ${missingKeys.length}");
+      sb.writelnKeys(missingKeys);
+    }
+
+    if (hasOverReported) {
+      sb.writeln("  extra: ${overReported.length}");
+      sb.writelnKeys(overReported);
+    }
+
+    if (isMissingKeys) {
+      _log.w(sb.toString().trim());
+    } else {
+      _log.d(sb.toString().trim());
+    }
+  }
+}
+
+extension _StringBufferExt on StringBuffer {
+  writelnKeys(Iterable<StringKey> keys) {
+    for (final key in keys) {
+      writeln("    - ${key.key}");
+    }
+  }
+}
