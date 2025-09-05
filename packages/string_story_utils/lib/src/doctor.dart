@@ -50,6 +50,7 @@ void checkPackageSetup() async {
   checkDep('slang_flutter');
   checkDep('flutter_localizations');
   checkDep('string_story');
+  // TODO check for flutter_bloc
   checkDevDep('string_story_utils');
 
   // 2. Check assets include folder with json translations
@@ -143,6 +144,8 @@ void checkPackageSetup() async {
           ok.add(okMsg('slang.yaml: string_story.version_code set'));
         }
         void checkSSDir(String key) {
+          // TODO make slang group
+          // TODO for hashDirectory say you might need to run generator first
           if (!ss.containsKey(key)) {
             issues.add(errMsg('slang.yaml: string_story.$key missing'));
           } else if (!Directory(ss[key]).existsSync()) {

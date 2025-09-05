@@ -79,8 +79,6 @@ void main() {
   );
 }
 
-void setupStringStory() {}
-
 class AppConfig {
   final memoryStorage = <String, String>{};
   UserContactData? userContactData;

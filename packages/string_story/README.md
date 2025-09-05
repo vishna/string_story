@@ -18,7 +18,7 @@ A Flutter package for building in-app locale editor and translation storyboards,
    dependencies:
      flutter:
        sdk: flutter
-     slang: ^3.0.0 # prequisite to using string_story
+     slang: ^4.8.0 # prequisite to using string_story
      string_story: # latest version
 
    dev_dependencies:
@@ -29,22 +29,12 @@ A Flutter package for building in-app locale editor and translation storyboards,
 
    Create a `slang.yaml` in your project root (see the example in [`example/slang.yaml`](./example/slang.yaml)).
 
-3. **Write String Stories**
+   - make sure you have the locale file in place
+   - run `dart run slang` to verify your slang setup is correct
 
-   Create story files in `lib/string_story/stories/`. For example:
+3. **Configure String Story**
 
-   ```dart
-   StringStory helloWorld() => StringStory(
-      keys: [
-        StringKey.hello,
-        StringKey.world,
-      ],
-      title: "Hello World Screen",
-      builder: (_) => HelloWorld(),
-   );
-   ```
-
-4. **Validate Setup**
+   Check string_story section inside `slang.yaml`
 
    Use the doctor script from `string_story_utils`:
 
@@ -52,19 +42,79 @@ A Flutter package for building in-app locale editor and translation storyboards,
    dart run string_story_utils:doctor
    ```
 
-5. **Generate Code**
+   - make sure you include json translation directory as assets of your app
 
-   Please run this from you app folder to generate all necessary project files
-
-   ```sh
-   dart run string_story_utils:generate
+   ```yaml
+   flutter:
+     assets:
+       - lib/i18n/json/ # example location
    ```
 
-   Later on, when adding new strings you might only need to run
+   Run the following command to generate bunch of files (UI editor):
 
    ```sh
-   dart run string_story_utils:generate --stories-only
+   dart run string_story_utils:doctor
    ```
+
+   If the command fails, follow the prompt messages or run doctor script again
+
+   The linter might show you a couple of errors/warning. Easy fix is:
+
+   ```yaml
+   include: package:flutter_lints/flutter.yaml
+
+   analyzer:
+     - "**/*.g.dart"
+   ```
+
+   Make sure you pass these to Material (...or Cupertino) App:
+
+   ```dart
+   locale: Locale(appLanguageCode),
+   localizationsDelegates: [
+     slangBaseState.asSlangDelegate(),
+     // you need these 3 otherwise Flutter complains
+     GlobalMaterialLocalizations.delegate,
+     GlobalWidgetsLocalizations.delegate,
+     GlobalCupertinoLocalizations.delegate,
+   ],
+   ```
+
+4. **Write String Stories**
+
+Create story files in your defined directory location, e.g.: `lib/string_story/stories/`. For example:
+
+```dart
+StringStory helloWorld() => StringStory(
+   keys: [
+     StringKey.hello,
+     StringKey.world,
+   ],
+   title: "Hello World Screen",
+   builder: (_) => HelloWorld(),
+);
+```
+
+Generate binding code with:
+
+```sh
+dart run string_story_utils:generate --stories-only
+```
+
+You might tho first regenerate slang dart files with:
+
+```sh
+dart run slang
+```
+
+5. In App Integration
+
+   // TODO fill in instructions here, look at the example
+
+   - put SlangBaseCubit above your app
+   - establish binding between your app and the SlangBaseCubit
+   - FIXME write a bunch of code to compile that follows example (this should probably be generated or less PITA)
+   - make sure you screen is wrapped in a TranslationScope
 
 ## Why String Stories?
 
