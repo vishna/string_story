@@ -11,9 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:string_story/string_story.dart';
 
 class StringStoryScreen extends HookWidget {
-  const StringStoryScreen({
-    super.key,
-  });
+  const StringStoryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -52,52 +50,45 @@ class _Panes extends HookWidget {
 
     return Provider.value(
       value: shared,
-      child: HookBuilder(builder: (context) {
-        final isReporting = useListenable(shared.isReporting).value;
-        if (isReporting) {
-          return Scaffold(
-            body: Row(
-              children: [
-                Flexible(
-                  child: _Content(
-                    isMobile: false,
-                    key: shared.contentKey,
+      child: HookBuilder(
+        builder: (context) {
+          final isReporting = useListenable(shared.isReporting).value;
+          if (isReporting) {
+            return Scaffold(
+              body: Row(
+                children: [
+                  Flexible(
+                    child: _Content(isMobile: false, key: shared.contentKey),
                   ),
-                ),
-                Flexible(
+                  Flexible(
                     child: logPaneBuilder != null
                         ? Builder(builder: logPaneBuilder)
-                        : const Placeholder())
-              ],
-            ),
-          );
-        }
+                        : const Placeholder(),
+                  ),
+                ],
+              ),
+            );
+          }
 
-        return StringStoryAdaptiveLayout(
-          mobile: (_) => const _MobileContent(),
-          desktop: (_) => Scaffold(
-            body: StringStoryGoldenPanes(
+          return StringStoryAdaptiveLayout(
+            mobile: (_) => const _MobileContent(),
+            desktop: (_) => Scaffold(
+              body: StringStoryGoldenPanes(
                 flipped: false,
                 showDivider: true,
-                smallerPane: _KeysTree(
-                  key: shared.keysTreeKey,
-                ),
-                biggerPane: _Content(
-                  isMobile: false,
-                  key: shared.contentKey,
-                )),
-          ),
-        );
-      }),
+                smallerPane: _KeysTree(key: shared.keysTreeKey),
+                biggerPane: _Content(isMobile: false, key: shared.contentKey),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }
 
 class _KeysTree extends HookWidget {
-  const _KeysTree({
-    required super.key,
-    this.searchFadeColors,
-  });
+  const _KeysTree({required super.key, this.searchFadeColors});
 
   final List<Color>? searchFadeColors;
 
@@ -116,19 +107,16 @@ class _KeysTree extends HookWidget {
         final selectedStringKey = StringKeyExt.fromString(value);
         shared.setActiveStory(key: selectedStringKey);
 
-        context
-            .read<SlangBaseCubit>()
-            .setLastSelectedKey(selectedStringKey?.key);
+        context.read<SlangBaseCubit>().setLastSelectedKey(
+              selectedStringKey?.key,
+            );
       },
     );
   }
 }
 
 class _Content extends HookWidget {
-  const _Content({
-    required super.key,
-    required this.isMobile,
-  });
+  const _Content({required super.key, required this.isMobile});
 
   final bool isMobile;
 
@@ -155,17 +143,15 @@ class _Content extends HookWidget {
       shared.state.value = shared.state.value?.next();
     }
 
-    final disablePreviewFocus =
-        context.select((SlangEditorCubit c) => c.state.disablePreviewFocus);
+    final disablePreviewFocus = context.select(
+      (SlangEditorCubit c) => c.state.disablePreviewFocus,
+    );
 
     return Provider<StringStorySelection>.value(
       value: StringStorySelection(key: state?.activeKey),
       child: Column(
         children: [
-          if (!isMobile) ...[
-            const _AppBar(),
-            SV_S,
-          ],
+          if (!isMobile) ...[const _AppBar(), SV_S],
           Center(child: Text(shared.state.value?.effectiveTitle ?? "")),
           SV_XS,
           Expanded(
@@ -188,11 +174,13 @@ class _Content extends HookWidget {
                       color: context.colors.surface,
                       child: TranslationScope(
                         key: ValueKey(
-                            state?.effectiveStringStory?.title ?? "NO STORY"),
+                          state?.effectiveStringStory?.title ?? "NO STORY",
+                        ),
                         debugLabel:
                             state?.effectiveStringStory?.title ?? "NO STORY",
                         scopeKeys: shared.getScopeKeysByStringStory(
-                            state?.effectiveStringStory),
+                          state?.effectiveStringStory,
+                        ),
                         child: Builder(
                           key: globalKey,
                           builder: state?.effectiveStringStory?.builder ??
@@ -210,14 +198,20 @@ class _Content extends HookWidget {
             children: [
               if (showControls)
                 IconButton(
-                    onPressed: prev, icon: const Icon(Icons.chevron_left)),
+                  onPressed: prev,
+                  icon: const Icon(Icons.chevron_left),
+                ),
               SH_XL,
               IconButton(
-                  onPressed: shared.refresh, icon: const Icon(Icons.refresh)),
+                onPressed: shared.refresh,
+                icon: const Icon(Icons.refresh),
+              ),
               SH_XL,
               if (showControls)
                 IconButton(
-                    onPressed: next, icon: const Icon(Icons.chevron_right)),
+                  onPressed: next,
+                  icon: const Icon(Icons.chevron_right),
+                ),
             ],
           ),
           SV_S,
@@ -241,7 +235,7 @@ Widget _emptyPathState(BuildContext context) {
             title: stringStoryPackageStrings.howtoTranslateTitle,
             message: stringStoryPackageStrings.howtoTranslateMessage,
           ),
-        )
+        ),
       ],
     );
   }
@@ -282,16 +276,13 @@ class _MobileContent extends HookWidget {
                     key: shared.keysTreeKey,
                     searchFadeColors: [
                       context.colors.surface,
-                      context.colors.surface.withAlpha(0)
+                      context.colors.surface.withAlpha(0),
                     ],
                   ),
                 ),
                 SizedBox(
                   width: cellWidth,
-                  child: _Content(
-                    isMobile: true,
-                    key: shared.contentKey,
-                  ),
+                  child: _Content(isMobile: true, key: shared.contentKey),
                 ),
               ],
             ),
@@ -312,33 +303,35 @@ class _AppBar extends HookWidget implements PreferredSizeWidget {
     final isDeveloper = StringStoryService.instance.config.isDeveloper;
     useListenable(shared.state);
     final isReporting = useListenable(shared.isReporting).value;
+    final hasTryTheApp =
+        StringStoryService.instance.inAppEditorConfig.onTryTheApp != null;
 
     final canPop = Navigator.of(context).canPop();
     return StringStoryAppBar(
-      leading: canPop
-          ? Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (!isReporting) const StringStoryAppBarLeading(),
-                if (isDeveloper && !isReporting) SH_XS,
-                if (isDeveloper)
-                  IconButton(
-                    onPressed: () {
-                      if (!shared.isReporting.value) {
-                        shared.play();
-                      } else {
-                        shared.stop();
-                      }
-                    },
-                    icon: const Icon(Icons.bug_report),
-                  ),
-              ],
-            )
-          : OutlinedButton(
+      leading: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (!isReporting && canPop) const StringStoryAppBarLeading(),
+          if (isDeveloper && !isReporting) SH_XS,
+          if (isDeveloper)
+            IconButton(
+              onPressed: () {
+                if (!shared.isReporting.value) {
+                  shared.play();
+                } else {
+                  shared.stop();
+                }
+              },
+              icon: const Icon(Icons.bug_report),
+            ),
+          if (hasTryTheApp)
+            OutlinedButton(
               onPressed:
                   StringStoryService.instance.inAppEditorConfig.onTryTheApp,
               child: Text(stringStoryPackageStrings.tryTheApp),
             ),
+        ],
+      ),
       progressWidget: isReporting
           ? const _InspectorProgressIndicator()
           : const _StringsProgressIndicator(),
@@ -352,7 +345,8 @@ class _AppBar extends HookWidget implements PreferredSizeWidget {
                 return stringStoryPackageStrings.allDoneExclamation;
               }
               return stringStoryPackageStrings.percentCompleted(
-                  (c.state.progress * 100).toStringAsFixed(2));
+                (c.state.progress * 100).toStringAsFixed(2),
+              );
             }),
       trailing: isReporting
           ? null
@@ -380,19 +374,25 @@ class _StringsProgressIndicator extends HookWidget {
   Widget build(BuildContext context) {
     final slangEditor = context.watch<SlangEditorCubit>();
     final editorState = slangEditor.state;
-    final approvedKeys = context.select((SlangBaseCubit c) => c.state
-            .maybeMap(data: (it) => it.approvedKeys, orElse: () => null)) ??
+    final approvedKeys = context.select(
+          (SlangBaseCubit c) => c.state.maybeMap(
+            data: (it) => it.approvedKeys,
+            orElse: () => null,
+          ),
+        ) ??
         <String>[];
     final selectedKey = useMemoized(() {
       final normalized = editorState.selectedKey?.split(".").first;
       return StringKey.values.firstWhereOrNull((it) => it.key == normalized);
     }, [editorState.selectedKey]);
-    final keyStatuses = StringKey.values.map((key) => StringKeyStatus(
-          isApproved: approvedKeys.contains(key.key),
-          isChanged: editorState.hasKeyChanged(key.key),
-          isSelected: selectedKey == key,
-          isSearched: editorState.searchResults.contains(key.key),
-        ));
+    final keyStatuses = StringKey.values.map(
+      (key) => StringKeyStatus(
+        isApproved: approvedKeys.contains(key.key),
+        isChanged: editorState.hasKeyChanged(key.key),
+        isSelected: selectedKey == key,
+        isSearched: editorState.searchResults.contains(key.key),
+      ),
+    );
 
     return _ProgressIndicator(keyStatuses.map((it) => it.asColor()).toList());
   }
@@ -403,8 +403,9 @@ class _InspectorProgressIndicator extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors =
-        useListenable(context.read<_Shared>().reportersIndicator).value;
+    final colors = useListenable(
+      context.read<_Shared>().reportersIndicator,
+    ).value;
 
     return _ProgressIndicator(colors);
   }
@@ -429,7 +430,7 @@ class _ProgressIndicator extends HookWidget {
         child: Stack(
           children: [
             Positioned.fill(child: ColoredBox(color: defaultColor)),
-            Positioned.fill(child: _ColorsProgressBar(colors: colors))
+            Positioned.fill(child: _ColorsProgressBar(colors: colors)),
           ],
         ),
       ),
@@ -444,9 +445,7 @@ class _ColorsProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: _ColorsProgressBarPainter(colors: colors),
-    );
+    return CustomPaint(painter: _ColorsProgressBarPainter(colors: colors));
   }
 }
 
@@ -572,9 +571,7 @@ class _Shared {
     );
   }
 
-  void setActiveStory({
-    StringKey? key,
-  }) {
+  void setActiveStory({StringKey? key}) {
     if (key == null) {
       state.value = null;
       return;
@@ -666,7 +663,8 @@ class _Shared {
       if (reporter == null) {
         isReporting.value = false;
         _log.e(
-            "Something went wrong - could not find reporter for ${story.title}");
+          "Something went wrong - could not find reporter for ${story.title}",
+        );
         return;
       }
 
@@ -689,10 +687,12 @@ class _Shared {
     final totalStories = stringStoriesMemoized.length;
     final okStories =
         _reporters.values.where((it) => it.missingKeys().isEmpty).length;
-    final storiesWithMissingKeys = _reporters.values
-        .where((it) => it.missingKeys().isNotEmpty && it.gotCalled);
-    final storiesNotCalled =
-        _reporters.values.where((it) => it.gotCalled == false);
+    final storiesWithMissingKeys = _reporters.values.where(
+      (it) => it.missingKeys().isNotEmpty && it.gotCalled,
+    );
+    final storiesNotCalled = _reporters.values.where(
+      (it) => it.gotCalled == false,
+    );
 
     final sb = StringBuffer()
       ..writeln()
@@ -733,12 +733,10 @@ class _Fab extends HookWidget {
         };
         shared.moveToMobileTab(nextTab);
       },
-      child: Icon(
-        switch (shared.mobileTab.value) {
-          _MobileTabs.keys => Icons.phone_android_outlined,
-          _MobileTabs.preview => Icons.edit,
-        },
-      ),
+      child: Icon(switch (shared.mobileTab.value) {
+        _MobileTabs.keys => Icons.phone_android_outlined,
+        _MobileTabs.preview => Icons.edit,
+      }),
     );
   }
 }
@@ -746,10 +744,7 @@ class _Fab extends HookWidget {
 final _log = StringStoryLogger("StoryReport");
 
 class _StoryReporter {
-  _StoryReporter({
-    required this.title,
-    required this.expected,
-  });
+  _StoryReporter({required this.title, required this.expected});
   final String title;
   late final TranslationScopeKeys keys = TranslationScopeKeys(onAdd: onAdd);
   final Set<StringKey> expected;
