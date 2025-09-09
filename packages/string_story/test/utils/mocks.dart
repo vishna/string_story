@@ -29,7 +29,7 @@ class MockStringStoryService extends StringStoryService {
             buildErrorWidget: (_) => throw UnimplementedError(),
             getUserContactData: () => null,
             setUserContactData: (_) {},
-            submitTranslations: (_, __) async {},
+            submitTranslations: (_, __, ___) async {},
           ),
           stringStoryConfig: ValueNotifier(StringStoryConfig(
               isEnabled: true, appLanguageCode: 'en', isDeveloper: false)),

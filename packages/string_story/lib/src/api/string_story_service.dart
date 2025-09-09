@@ -96,7 +96,8 @@ class InAppEditorConfig {
   final UserContactData? Function() getUserContactData;
   final void Function(UserContactData) setUserContactData;
 
-  final Future<void> Function(SlangBaseStateData diffContent, int versionCode)
+  final Future<void> Function(
+          BuildContext context, SlangBaseStateData diffContent, int versionCode)
       submitTranslations;
 
   /// internal strings used by string_story package widgets

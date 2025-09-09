@@ -50,7 +50,7 @@ void checkPackageSetup() async {
   checkDep('slang_flutter');
   checkDep('flutter_localizations');
   checkDep('string_story');
-  // TODO check for flutter_bloc
+  checkDep('flutter_bloc');
   checkDevDep('string_story_utils');
 
   // 2. Check assets include folder with json translations

@@ -25,9 +25,10 @@ class HelpTranslateCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Icon(
+            Icon(
               Icons.translate,
               size: DimensionsDouble.ml,
+              color: context.colors.onTertiaryContainer,
             ),
             SH_SM,
             Expanded(
@@ -36,11 +37,13 @@ class HelpTranslateCard extends StatelessWidget {
                 children: [
                   SimpleRichText(
                     title,
-                    style: context.textStyles.titleSmall,
+                    style: context.textStyles.titleSmall
+                        ?.copyWith(color: context.colors.onTertiaryContainer),
                   ),
                   SimpleRichText(
                     message,
-                    style: context.textStyles.bodySmall,
+                    style: context.textStyles.bodySmall
+                        ?.copyWith(color: context.colors.onTertiaryContainer),
                   ),
                 ],
               ),

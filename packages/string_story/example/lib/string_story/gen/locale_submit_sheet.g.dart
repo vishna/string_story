@@ -50,8 +50,8 @@ class LocaleSubmitSheet {
         StringStoryService.instance.inAppEditorConfig
             .setUserContactData(contactData);
       },
-      submitTranslationData: () async =>
-          await _submitTranslations(slangBaseCubit: baseCubit),
+      submitTranslationData: () async => await _submitTranslations(
+          context: context, slangBaseCubit: baseCubit),
       onExit: () {
         Navigator.of(context).pop();
       },
@@ -614,12 +614,13 @@ class _DiffWidget extends StatelessWidget {
 }
 
 Future<void> _submitTranslations({
+  required BuildContext context,
   required SlangBaseCubit slangBaseCubit,
 }) async {
   final diffContent = await slangBaseCubit.exportDiffContent();
 
   await StringStoryService.instance.inAppEditorConfig
-      .submitTranslations(diffContent, _slangStringsVersion);
+      .submitTranslations(context, diffContent, _slangStringsVersion);
 
   slangBaseCubit.markSubmitted();
 }

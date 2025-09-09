@@ -49,7 +49,7 @@ void main() {
         setUserContactData: (data) {
           appConfig.userContactData = data;
         },
-        submitTranslations: (data, version) async {
+        submitTranslations: (context, data, version) async {
           await Clipboard.setData(ClipboardData(text: jsonEncode(data)));
           MySnacks.showTranslationChangesCopied(
               context: _navigatorKey.currentContext!);

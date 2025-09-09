@@ -596,7 +596,10 @@ class _TranslationBubble extends StatelessWidget {
               ),
               SH_S,
               Expanded(
-                child: Text(text),
+                child: Text(
+                  text,
+                  style: TextStyle(color: context.colors.onPrimaryContainer),
+                ),
               ),
             ],
           ),
