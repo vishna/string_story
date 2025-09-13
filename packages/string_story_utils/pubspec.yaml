@@ -8,14 +8,14 @@ environment:
 
 dependencies:
   yaml: ^3.1.3
-  mustache_template: ^2.0.0
+  mustache_template: ^2.0.1
   mustache_recase: ^3.0.0
   crypto: ^3.0.6
-  analyzer: ^7.3.0
-  dartantic_ai: ^1.0.6
+  analyzer: ^8.1.1
+  dartantic_ai: ^1.0.8
   dotenv: ^4.2.0
   sealed_languages: ^2.3.0
-  freezed_annotation: ^2.4.4
+  freezed_annotation: ^3.1.0
   collection: ^1.19.1
   recase: ^4.1.0
   path: ^1.9.1

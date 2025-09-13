@@ -23,7 +23,7 @@ sealed class SlangBaseState with _$SlangBaseState {
 }
 
 @freezed
-class UserContactData with _$UserContactData {
+abstract class UserContactData with _$UserContactData {
   const factory UserContactData({
     String? email,
     String? name,

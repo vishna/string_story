@@ -60,3 +60,12 @@ stories:
     #!/usr/bin/env sh
     cd packages/string_story/example
     dart run string_story_utils:generate --stories-only
+
+bs:
+    #!/usr/bin/env sh
+    cd packages/string_story_utils
+    flutter clean && flutter pub get
+    cd ../string_story
+    flutter clean && flutter pub get
+    cd example
+    flutter clean && flutter pub get

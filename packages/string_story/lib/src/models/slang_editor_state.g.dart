@@ -6,9 +6,8 @@ part of 'slang_editor_state.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$SlangEditorStateImpl _$$SlangEditorStateImplFromJson(
-        Map<String, dynamic> json) =>
-    _$SlangEditorStateImpl(
+_SlangEditorState _$SlangEditorStateFromJson(Map<String, dynamic> json) =>
+    _SlangEditorState(
       slangJson: json['slangJson'] as Map<String, dynamic>? ?? const {},
       slangScopedJson:
           json['slangScopedJson'] as Map<String, dynamic>? ?? const {},
@@ -32,8 +31,7 @@ _$SlangEditorStateImpl _$$SlangEditorStateImplFromJson(
       progress: (json['progress'] as num?)?.toDouble() ?? 0.0,
     );
 
-Map<String, dynamic> _$$SlangEditorStateImplToJson(
-        _$SlangEditorStateImpl instance) =>
+Map<String, dynamic> _$SlangEditorStateToJson(_SlangEditorState instance) =>
     <String, dynamic>{
       'slangJson': instance.slangJson,
       'slangScopedJson': instance.slangScopedJson,

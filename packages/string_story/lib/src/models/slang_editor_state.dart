@@ -7,7 +7,7 @@ part 'slang_editor_state.freezed.dart';
 part 'slang_editor_state.g.dart';
 
 @freezed
-class SlangEditorState with _$SlangEditorState {
+abstract class SlangEditorState with _$SlangEditorState {
   factory SlangEditorState({
     /// current live locale file
     @Default({}) Map<String, dynamic> slangJson,

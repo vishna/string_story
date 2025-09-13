@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,11 +9,8 @@ part of 'slang_base_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
 SlangBaseState _$SlangBaseStateFromJson(Map<String, dynamic> json) {
   switch (json['runtimeType']) {
     case 'idle':
@@ -29,137 +26,13 @@ SlangBaseState _$SlangBaseStateFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$SlangBaseState {
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() idle,
-    required TResult Function(
-            int version,
-            UserContactData contactData,
-            String languageCode,
-            Map<String, dynamic> slangJson,
-            bool hasChanges,
-            bool isSubmitted,
-            List<String> approvedKeys,
-            String? lastSelectedKey)
-        data,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? idle,
-    TResult? Function(
-            int version,
-            UserContactData contactData,
-            String languageCode,
-            Map<String, dynamic> slangJson,
-            bool hasChanges,
-            bool isSubmitted,
-            List<String> approvedKeys,
-            String? lastSelectedKey)?
-        data,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? idle,
-    TResult Function(
-            int version,
-            UserContactData contactData,
-            String languageCode,
-            Map<String, dynamic> slangJson,
-            bool hasChanges,
-            bool isSubmitted,
-            List<String> approvedKeys,
-            String? lastSelectedKey)?
-        data,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(SlangBaseStateIdle value) idle,
-    required TResult Function(SlangBaseStateData value) data,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(SlangBaseStateIdle value)? idle,
-    TResult? Function(SlangBaseStateData value)? data,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(SlangBaseStateIdle value)? idle,
-    TResult Function(SlangBaseStateData value)? data,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
-
   /// Serializes this SlangBaseState to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $SlangBaseStateCopyWith<$Res> {
-  factory $SlangBaseStateCopyWith(
-          SlangBaseState value, $Res Function(SlangBaseState) then) =
-      _$SlangBaseStateCopyWithImpl<$Res, SlangBaseState>;
-}
-
-/// @nodoc
-class _$SlangBaseStateCopyWithImpl<$Res, $Val extends SlangBaseState>
-    implements $SlangBaseStateCopyWith<$Res> {
-  _$SlangBaseStateCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of SlangBaseState
-  /// with the given fields replaced by the non-null parameter values.
-}
-
-/// @nodoc
-abstract class _$$SlangBaseStateIdleImplCopyWith<$Res> {
-  factory _$$SlangBaseStateIdleImplCopyWith(_$SlangBaseStateIdleImpl value,
-          $Res Function(_$SlangBaseStateIdleImpl) then) =
-      __$$SlangBaseStateIdleImplCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$SlangBaseStateIdleImplCopyWithImpl<$Res>
-    extends _$SlangBaseStateCopyWithImpl<$Res, _$SlangBaseStateIdleImpl>
-    implements _$$SlangBaseStateIdleImplCopyWith<$Res> {
-  __$$SlangBaseStateIdleImplCopyWithImpl(_$SlangBaseStateIdleImpl _value,
-      $Res Function(_$SlangBaseStateIdleImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of SlangBaseState
-  /// with the given fields replaced by the non-null parameter values.
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$SlangBaseStateIdleImpl implements SlangBaseStateIdle {
-  const _$SlangBaseStateIdleImpl({final String? $type})
-      : $type = $type ?? 'idle';
-
-  factory _$SlangBaseStateIdleImpl.fromJson(Map<String, dynamic> json) =>
-      _$$SlangBaseStateIdleImplFromJson(json);
-
-  @JsonKey(name: 'runtimeType')
-  final String $type;
-
-  @override
-  String toString() {
-    return 'SlangBaseState.idle()';
-  }
+  Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$SlangBaseStateIdleImpl);
+        (other.runtimeType == runtimeType && other is SlangBaseState);
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -167,42 +40,114 @@ class _$SlangBaseStateIdleImpl implements SlangBaseStateIdle {
   int get hashCode => runtimeType.hashCode;
 
   @override
+  String toString() {
+    return 'SlangBaseState()';
+  }
+}
+
+/// @nodoc
+class $SlangBaseStateCopyWith<$Res> {
+  $SlangBaseStateCopyWith(SlangBaseState _, $Res Function(SlangBaseState) __);
+}
+
+/// Adds pattern-matching-related methods to [SlangBaseState].
+extension SlangBaseStatePatterns on SlangBaseState {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
   @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() idle,
-    required TResult Function(
-            int version,
-            UserContactData contactData,
-            String languageCode,
-            Map<String, dynamic> slangJson,
-            bool hasChanges,
-            bool isSubmitted,
-            List<String> approvedKeys,
-            String? lastSelectedKey)
-        data,
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(SlangBaseStateIdle value)? idle,
+    TResult Function(SlangBaseStateData value)? data,
+    required TResult orElse(),
   }) {
-    return idle();
+    final _that = this;
+    switch (_that) {
+      case SlangBaseStateIdle() when idle != null:
+        return idle(_that);
+      case SlangBaseStateData() when data != null:
+        return data(_that);
+      case _:
+        return orElse();
+    }
   }
 
-  @override
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
   @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? idle,
-    TResult? Function(
-            int version,
-            UserContactData contactData,
-            String languageCode,
-            Map<String, dynamic> slangJson,
-            bool hasChanges,
-            bool isSubmitted,
-            List<String> approvedKeys,
-            String? lastSelectedKey)?
-        data,
+  TResult map<TResult extends Object?>({
+    required TResult Function(SlangBaseStateIdle value) idle,
+    required TResult Function(SlangBaseStateData value) data,
   }) {
-    return idle?.call();
+    final _that = this;
+    switch (_that) {
+      case SlangBaseStateIdle():
+        return idle(_that);
+      case SlangBaseStateData():
+        return data(_that);
+    }
   }
 
-  @override
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(SlangBaseStateIdle value)? idle,
+    TResult? Function(SlangBaseStateData value)? data,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case SlangBaseStateIdle() when idle != null:
+        return idle(_that);
+      case SlangBaseStateData() when data != null:
+        return data(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? idle,
@@ -218,150 +163,152 @@ class _$SlangBaseStateIdleImpl implements SlangBaseStateIdle {
         data,
     required TResult orElse(),
   }) {
-    if (idle != null) {
-      return idle();
+    final _that = this;
+    switch (_that) {
+      case SlangBaseStateIdle() when idle != null:
+        return idle();
+      case SlangBaseStateData() when data != null:
+        return data(
+            _that.version,
+            _that.contactData,
+            _that.languageCode,
+            _that.slangJson,
+            _that.hasChanges,
+            _that.isSubmitted,
+            _that.approvedKeys,
+            _that.lastSelectedKey);
+      case _:
+        return orElse();
     }
-    return orElse();
   }
 
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(SlangBaseStateIdle value) idle,
-    required TResult Function(SlangBaseStateData value) data,
-  }) {
-    return idle(this);
-  }
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
 
-  @override
   @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(SlangBaseStateIdle value)? idle,
-    TResult? Function(SlangBaseStateData value)? data,
+  TResult when<TResult extends Object?>({
+    required TResult Function() idle,
+    required TResult Function(
+            int version,
+            UserContactData contactData,
+            String languageCode,
+            Map<String, dynamic> slangJson,
+            bool hasChanges,
+            bool isSubmitted,
+            List<String> approvedKeys,
+            String? lastSelectedKey)
+        data,
   }) {
-    return idle?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(SlangBaseStateIdle value)? idle,
-    TResult Function(SlangBaseStateData value)? data,
-    required TResult orElse(),
-  }) {
-    if (idle != null) {
-      return idle(this);
+    final _that = this;
+    switch (_that) {
+      case SlangBaseStateIdle():
+        return idle();
+      case SlangBaseStateData():
+        return data(
+            _that.version,
+            _that.contactData,
+            _that.languageCode,
+            _that.slangJson,
+            _that.hasChanges,
+            _that.isSubmitted,
+            _that.approvedKeys,
+            _that.lastSelectedKey);
     }
-    return orElse();
   }
 
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$SlangBaseStateIdleImplToJson(
-      this,
-    );
-  }
-}
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
 
-abstract class SlangBaseStateIdle implements SlangBaseState {
-  const factory SlangBaseStateIdle() = _$SlangBaseStateIdleImpl;
-
-  factory SlangBaseStateIdle.fromJson(Map<String, dynamic> json) =
-      _$SlangBaseStateIdleImpl.fromJson;
-}
-
-/// @nodoc
-abstract class _$$SlangBaseStateDataImplCopyWith<$Res> {
-  factory _$$SlangBaseStateDataImplCopyWith(_$SlangBaseStateDataImpl value,
-          $Res Function(_$SlangBaseStateDataImpl) then) =
-      __$$SlangBaseStateDataImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call(
-      {int version,
-      UserContactData contactData,
-      String languageCode,
-      Map<String, dynamic> slangJson,
-      bool hasChanges,
-      bool isSubmitted,
-      List<String> approvedKeys,
-      String? lastSelectedKey});
-
-  $UserContactDataCopyWith<$Res> get contactData;
-}
-
-/// @nodoc
-class __$$SlangBaseStateDataImplCopyWithImpl<$Res>
-    extends _$SlangBaseStateCopyWithImpl<$Res, _$SlangBaseStateDataImpl>
-    implements _$$SlangBaseStateDataImplCopyWith<$Res> {
-  __$$SlangBaseStateDataImplCopyWithImpl(_$SlangBaseStateDataImpl _value,
-      $Res Function(_$SlangBaseStateDataImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of SlangBaseState
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? version = null,
-    Object? contactData = null,
-    Object? languageCode = null,
-    Object? slangJson = null,
-    Object? hasChanges = null,
-    Object? isSubmitted = null,
-    Object? approvedKeys = null,
-    Object? lastSelectedKey = freezed,
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? idle,
+    TResult? Function(
+            int version,
+            UserContactData contactData,
+            String languageCode,
+            Map<String, dynamic> slangJson,
+            bool hasChanges,
+            bool isSubmitted,
+            List<String> approvedKeys,
+            String? lastSelectedKey)?
+        data,
   }) {
-    return _then(_$SlangBaseStateDataImpl(
-      version: null == version
-          ? _value.version
-          : version // ignore: cast_nullable_to_non_nullable
-              as int,
-      contactData: null == contactData
-          ? _value.contactData
-          : contactData // ignore: cast_nullable_to_non_nullable
-              as UserContactData,
-      languageCode: null == languageCode
-          ? _value.languageCode
-          : languageCode // ignore: cast_nullable_to_non_nullable
-              as String,
-      slangJson: null == slangJson
-          ? _value._slangJson
-          : slangJson // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>,
-      hasChanges: null == hasChanges
-          ? _value.hasChanges
-          : hasChanges // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isSubmitted: null == isSubmitted
-          ? _value.isSubmitted
-          : isSubmitted // ignore: cast_nullable_to_non_nullable
-              as bool,
-      approvedKeys: null == approvedKeys
-          ? _value._approvedKeys
-          : approvedKeys // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      lastSelectedKey: freezed == lastSelectedKey
-          ? _value.lastSelectedKey
-          : lastSelectedKey // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
-  }
-
-  /// Create a copy of SlangBaseState
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $UserContactDataCopyWith<$Res> get contactData {
-    return $UserContactDataCopyWith<$Res>(_value.contactData, (value) {
-      return _then(_value.copyWith(contactData: value));
-    });
+    final _that = this;
+    switch (_that) {
+      case SlangBaseStateIdle() when idle != null:
+        return idle();
+      case SlangBaseStateData() when data != null:
+        return data(
+            _that.version,
+            _that.contactData,
+            _that.languageCode,
+            _that.slangJson,
+            _that.hasChanges,
+            _that.isSubmitted,
+            _that.approvedKeys,
+            _that.lastSelectedKey);
+      case _:
+        return null;
+    }
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$SlangBaseStateDataImpl implements SlangBaseStateData {
-  const _$SlangBaseStateDataImpl(
+class SlangBaseStateIdle implements SlangBaseState {
+  const SlangBaseStateIdle({final String? $type}) : $type = $type ?? 'idle';
+  factory SlangBaseStateIdle.fromJson(Map<String, dynamic> json) =>
+      _$SlangBaseStateIdleFromJson(json);
+
+  @JsonKey(name: 'runtimeType')
+  final String $type;
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$SlangBaseStateIdleToJson(
+      this,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is SlangBaseStateIdle);
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() {
+    return 'SlangBaseState.idle()';
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class SlangBaseStateData implements SlangBaseState {
+  const SlangBaseStateData(
       {required this.version,
       this.contactData = const UserContactData(),
       required this.languageCode,
@@ -374,31 +321,23 @@ class _$SlangBaseStateDataImpl implements SlangBaseStateData {
       : _slangJson = slangJson,
         _approvedKeys = approvedKeys,
         $type = $type ?? 'data';
+  factory SlangBaseStateData.fromJson(Map<String, dynamic> json) =>
+      _$SlangBaseStateDataFromJson(json);
 
-  factory _$SlangBaseStateDataImpl.fromJson(Map<String, dynamic> json) =>
-      _$$SlangBaseStateDataImplFromJson(json);
-
-  @override
   final int version;
-  @override
   @JsonKey()
   final UserContactData contactData;
-  @override
   final String languageCode;
   final Map<String, dynamic> _slangJson;
-  @override
   Map<String, dynamic> get slangJson {
     if (_slangJson is EqualUnmodifiableMapView) return _slangJson;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableMapView(_slangJson);
   }
 
-  @override
   final bool hasChanges;
-  @override
   final bool isSubmitted;
   final List<String> _approvedKeys;
-  @override
   @JsonKey()
   List<String> get approvedKeys {
     if (_approvedKeys is EqualUnmodifiableListView) return _approvedKeys;
@@ -406,22 +345,30 @@ class _$SlangBaseStateDataImpl implements SlangBaseStateData {
     return EqualUnmodifiableListView(_approvedKeys);
   }
 
-  @override
   final String? lastSelectedKey;
 
   @JsonKey(name: 'runtimeType')
   final String $type;
 
+  /// Create a copy of SlangBaseState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $SlangBaseStateDataCopyWith<SlangBaseStateData> get copyWith =>
+      _$SlangBaseStateDataCopyWithImpl<SlangBaseStateData>(this, _$identity);
+
   @override
-  String toString() {
-    return 'SlangBaseState.data(version: $version, contactData: $contactData, languageCode: $languageCode, slangJson: $slangJson, hasChanges: $hasChanges, isSubmitted: $isSubmitted, approvedKeys: $approvedKeys, lastSelectedKey: $lastSelectedKey)';
+  Map<String, dynamic> toJson() {
+    return _$SlangBaseStateDataToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$SlangBaseStateDataImpl &&
+            other is SlangBaseStateData &&
             (identical(other.version, version) || other.version == version) &&
             (identical(other.contactData, contactData) ||
                 other.contactData == contactData) &&
@@ -452,280 +399,122 @@ class _$SlangBaseStateDataImpl implements SlangBaseStateData {
       const DeepCollectionEquality().hash(_approvedKeys),
       lastSelectedKey);
 
+  @override
+  String toString() {
+    return 'SlangBaseState.data(version: $version, contactData: $contactData, languageCode: $languageCode, slangJson: $slangJson, hasChanges: $hasChanges, isSubmitted: $isSubmitted, approvedKeys: $approvedKeys, lastSelectedKey: $lastSelectedKey)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $SlangBaseStateDataCopyWith<$Res>
+    implements $SlangBaseStateCopyWith<$Res> {
+  factory $SlangBaseStateDataCopyWith(
+          SlangBaseStateData value, $Res Function(SlangBaseStateData) _then) =
+      _$SlangBaseStateDataCopyWithImpl;
+  @useResult
+  $Res call(
+      {int version,
+      UserContactData contactData,
+      String languageCode,
+      Map<String, dynamic> slangJson,
+      bool hasChanges,
+      bool isSubmitted,
+      List<String> approvedKeys,
+      String? lastSelectedKey});
+
+  $UserContactDataCopyWith<$Res> get contactData;
+}
+
+/// @nodoc
+class _$SlangBaseStateDataCopyWithImpl<$Res>
+    implements $SlangBaseStateDataCopyWith<$Res> {
+  _$SlangBaseStateDataCopyWithImpl(this._self, this._then);
+
+  final SlangBaseStateData _self;
+  final $Res Function(SlangBaseStateData) _then;
+
   /// Create a copy of SlangBaseState
   /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? version = null,
+    Object? contactData = null,
+    Object? languageCode = null,
+    Object? slangJson = null,
+    Object? hasChanges = null,
+    Object? isSubmitted = null,
+    Object? approvedKeys = null,
+    Object? lastSelectedKey = freezed,
+  }) {
+    return _then(SlangBaseStateData(
+      version: null == version
+          ? _self.version
+          : version // ignore: cast_nullable_to_non_nullable
+              as int,
+      contactData: null == contactData
+          ? _self.contactData
+          : contactData // ignore: cast_nullable_to_non_nullable
+              as UserContactData,
+      languageCode: null == languageCode
+          ? _self.languageCode
+          : languageCode // ignore: cast_nullable_to_non_nullable
+              as String,
+      slangJson: null == slangJson
+          ? _self._slangJson
+          : slangJson // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      hasChanges: null == hasChanges
+          ? _self.hasChanges
+          : hasChanges // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isSubmitted: null == isSubmitted
+          ? _self.isSubmitted
+          : isSubmitted // ignore: cast_nullable_to_non_nullable
+              as bool,
+      approvedKeys: null == approvedKeys
+          ? _self._approvedKeys
+          : approvedKeys // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      lastSelectedKey: freezed == lastSelectedKey
+          ? _self.lastSelectedKey
+          : lastSelectedKey // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+
+  /// Create a copy of SlangBaseState
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  _$$SlangBaseStateDataImplCopyWith<_$SlangBaseStateDataImpl> get copyWith =>
-      __$$SlangBaseStateDataImplCopyWithImpl<_$SlangBaseStateDataImpl>(
-          this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() idle,
-    required TResult Function(
-            int version,
-            UserContactData contactData,
-            String languageCode,
-            Map<String, dynamic> slangJson,
-            bool hasChanges,
-            bool isSubmitted,
-            List<String> approvedKeys,
-            String? lastSelectedKey)
-        data,
-  }) {
-    return data(version, contactData, languageCode, slangJson, hasChanges,
-        isSubmitted, approvedKeys, lastSelectedKey);
+  $UserContactDataCopyWith<$Res> get contactData {
+    return $UserContactDataCopyWith<$Res>(_self.contactData, (value) {
+      return _then(_self.copyWith(contactData: value));
+    });
   }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? idle,
-    TResult? Function(
-            int version,
-            UserContactData contactData,
-            String languageCode,
-            Map<String, dynamic> slangJson,
-            bool hasChanges,
-            bool isSubmitted,
-            List<String> approvedKeys,
-            String? lastSelectedKey)?
-        data,
-  }) {
-    return data?.call(version, contactData, languageCode, slangJson, hasChanges,
-        isSubmitted, approvedKeys, lastSelectedKey);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? idle,
-    TResult Function(
-            int version,
-            UserContactData contactData,
-            String languageCode,
-            Map<String, dynamic> slangJson,
-            bool hasChanges,
-            bool isSubmitted,
-            List<String> approvedKeys,
-            String? lastSelectedKey)?
-        data,
-    required TResult orElse(),
-  }) {
-    if (data != null) {
-      return data(version, contactData, languageCode, slangJson, hasChanges,
-          isSubmitted, approvedKeys, lastSelectedKey);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(SlangBaseStateIdle value) idle,
-    required TResult Function(SlangBaseStateData value) data,
-  }) {
-    return data(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(SlangBaseStateIdle value)? idle,
-    TResult? Function(SlangBaseStateData value)? data,
-  }) {
-    return data?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(SlangBaseStateIdle value)? idle,
-    TResult Function(SlangBaseStateData value)? data,
-    required TResult orElse(),
-  }) {
-    if (data != null) {
-      return data(this);
-    }
-    return orElse();
-  }
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$SlangBaseStateDataImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class SlangBaseStateData implements SlangBaseState {
-  const factory SlangBaseStateData(
-      {required final int version,
-      final UserContactData contactData,
-      required final String languageCode,
-      required final Map<String, dynamic> slangJson,
-      required final bool hasChanges,
-      required final bool isSubmitted,
-      final List<String> approvedKeys,
-      final String? lastSelectedKey}) = _$SlangBaseStateDataImpl;
-
-  factory SlangBaseStateData.fromJson(Map<String, dynamic> json) =
-      _$SlangBaseStateDataImpl.fromJson;
-
-  int get version;
-  UserContactData get contactData;
-  String get languageCode;
-  Map<String, dynamic> get slangJson;
-  bool get hasChanges;
-  bool get isSubmitted;
-  List<String> get approvedKeys;
-  String? get lastSelectedKey;
-
-  /// Create a copy of SlangBaseState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$SlangBaseStateDataImplCopyWith<_$SlangBaseStateDataImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-UserContactData _$UserContactDataFromJson(Map<String, dynamic> json) {
-  return _UserContactData.fromJson(json);
 }
 
 /// @nodoc
 mixin _$UserContactData {
-  String? get email => throw _privateConstructorUsedError;
-  String? get name => throw _privateConstructorUsedError;
-  String? get website => throw _privateConstructorUsedError;
-
-  /// Serializes this UserContactData to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  String? get email;
+  String? get name;
+  String? get website;
 
   /// Create a copy of UserContactData
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
   $UserContactDataCopyWith<UserContactData> get copyWith =>
-      throw _privateConstructorUsedError;
-}
+      _$UserContactDataCopyWithImpl<UserContactData>(
+          this as UserContactData, _$identity);
 
-/// @nodoc
-abstract class $UserContactDataCopyWith<$Res> {
-  factory $UserContactDataCopyWith(
-          UserContactData value, $Res Function(UserContactData) then) =
-      _$UserContactDataCopyWithImpl<$Res, UserContactData>;
-  @useResult
-  $Res call({String? email, String? name, String? website});
-}
-
-/// @nodoc
-class _$UserContactDataCopyWithImpl<$Res, $Val extends UserContactData>
-    implements $UserContactDataCopyWith<$Res> {
-  _$UserContactDataCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of UserContactData
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? email = freezed,
-    Object? name = freezed,
-    Object? website = freezed,
-  }) {
-    return _then(_value.copyWith(
-      email: freezed == email
-          ? _value.email
-          : email // ignore: cast_nullable_to_non_nullable
-              as String?,
-      name: freezed == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String?,
-      website: freezed == website
-          ? _value.website
-          : website // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
-  }
-}
-
-/// @nodoc
-abstract class _$$UserContactDataImplCopyWith<$Res>
-    implements $UserContactDataCopyWith<$Res> {
-  factory _$$UserContactDataImplCopyWith(_$UserContactDataImpl value,
-          $Res Function(_$UserContactDataImpl) then) =
-      __$$UserContactDataImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({String? email, String? name, String? website});
-}
-
-/// @nodoc
-class __$$UserContactDataImplCopyWithImpl<$Res>
-    extends _$UserContactDataCopyWithImpl<$Res, _$UserContactDataImpl>
-    implements _$$UserContactDataImplCopyWith<$Res> {
-  __$$UserContactDataImplCopyWithImpl(
-      _$UserContactDataImpl _value, $Res Function(_$UserContactDataImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of UserContactData
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? email = freezed,
-    Object? name = freezed,
-    Object? website = freezed,
-  }) {
-    return _then(_$UserContactDataImpl(
-      email: freezed == email
-          ? _value.email
-          : email // ignore: cast_nullable_to_non_nullable
-              as String?,
-      name: freezed == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String?,
-      website: freezed == website
-          ? _value.website
-          : website // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$UserContactDataImpl implements _UserContactData {
-  const _$UserContactDataImpl({this.email, this.name, this.website});
-
-  factory _$UserContactDataImpl.fromJson(Map<String, dynamic> json) =>
-      _$$UserContactDataImplFromJson(json);
-
-  @override
-  final String? email;
-  @override
-  final String? name;
-  @override
-  final String? website;
-
-  @override
-  String toString() {
-    return 'UserContactData(email: $email, name: $name, website: $website)';
-  }
+  /// Serializes this UserContactData to a JSON map.
+  Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$UserContactDataImpl &&
+            other is UserContactData &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.website, website) || other.website == website));
@@ -735,43 +524,304 @@ class _$UserContactDataImpl implements _UserContactData {
   @override
   int get hashCode => Object.hash(runtimeType, email, name, website);
 
-  /// Create a copy of UserContactData
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  @pragma('vm:prefer-inline')
-  _$$UserContactDataImplCopyWith<_$UserContactDataImpl> get copyWith =>
-      __$$UserContactDataImplCopyWithImpl<_$UserContactDataImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$UserContactDataImplToJson(
-      this,
-    );
+  String toString() {
+    return 'UserContactData(email: $email, name: $name, website: $website)';
   }
 }
 
-abstract class _UserContactData implements UserContactData {
-  const factory _UserContactData(
-      {final String? email,
-      final String? name,
-      final String? website}) = _$UserContactDataImpl;
+/// @nodoc
+abstract mixin class $UserContactDataCopyWith<$Res> {
+  factory $UserContactDataCopyWith(
+          UserContactData value, $Res Function(UserContactData) _then) =
+      _$UserContactDataCopyWithImpl;
+  @useResult
+  $Res call({String? email, String? name, String? website});
+}
 
-  factory _UserContactData.fromJson(Map<String, dynamic> json) =
-      _$UserContactDataImpl.fromJson;
+/// @nodoc
+class _$UserContactDataCopyWithImpl<$Res>
+    implements $UserContactDataCopyWith<$Res> {
+  _$UserContactDataCopyWithImpl(this._self, this._then);
+
+  final UserContactData _self;
+  final $Res Function(UserContactData) _then;
+
+  /// Create a copy of UserContactData
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? email = freezed,
+    Object? name = freezed,
+    Object? website = freezed,
+  }) {
+    return _then(_self.copyWith(
+      email: freezed == email
+          ? _self.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String?,
+      name: freezed == name
+          ? _self.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      website: freezed == website
+          ? _self.website
+          : website // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// Adds pattern-matching-related methods to [UserContactData].
+extension UserContactDataPatterns on UserContactData {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_UserContactData value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _UserContactData() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_UserContactData value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _UserContactData():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_UserContactData value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _UserContactData() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(String? email, String? name, String? website)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _UserContactData() when $default != null:
+        return $default(_that.email, _that.name, _that.website);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(String? email, String? name, String? website) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _UserContactData():
+        return $default(_that.email, _that.name, _that.website);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(String? email, String? name, String? website)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _UserContactData() when $default != null:
+        return $default(_that.email, _that.name, _that.website);
+      case _:
+        return null;
+    }
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _UserContactData implements UserContactData {
+  const _UserContactData({this.email, this.name, this.website});
+  factory _UserContactData.fromJson(Map<String, dynamic> json) =>
+      _$UserContactDataFromJson(json);
 
   @override
-  String? get email;
+  final String? email;
   @override
-  String? get name;
+  final String? name;
   @override
-  String? get website;
+  final String? website;
 
   /// Create a copy of UserContactData
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$UserContactDataImplCopyWith<_$UserContactDataImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @pragma('vm:prefer-inline')
+  _$UserContactDataCopyWith<_UserContactData> get copyWith =>
+      __$UserContactDataCopyWithImpl<_UserContactData>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$UserContactDataToJson(
+      this,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _UserContactData &&
+            (identical(other.email, email) || other.email == email) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.website, website) || other.website == website));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, email, name, website);
+
+  @override
+  String toString() {
+    return 'UserContactData(email: $email, name: $name, website: $website)';
+  }
 }
+
+/// @nodoc
+abstract mixin class _$UserContactDataCopyWith<$Res>
+    implements $UserContactDataCopyWith<$Res> {
+  factory _$UserContactDataCopyWith(
+          _UserContactData value, $Res Function(_UserContactData) _then) =
+      __$UserContactDataCopyWithImpl;
+  @override
+  @useResult
+  $Res call({String? email, String? name, String? website});
+}
+
+/// @nodoc
+class __$UserContactDataCopyWithImpl<$Res>
+    implements _$UserContactDataCopyWith<$Res> {
+  __$UserContactDataCopyWithImpl(this._self, this._then);
+
+  final _UserContactData _self;
+  final $Res Function(_UserContactData) _then;
+
+  /// Create a copy of UserContactData
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? email = freezed,
+    Object? name = freezed,
+    Object? website = freezed,
+  }) {
+    return _then(_UserContactData(
+      email: freezed == email
+          ? _self.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String?,
+      name: freezed == name
+          ? _self.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      website: freezed == website
+          ? _self.website
+          : website // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+// dart format on

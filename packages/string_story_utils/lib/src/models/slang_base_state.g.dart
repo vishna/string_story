@@ -6,21 +6,18 @@ part of 'slang_base_state.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$SlangBaseStateIdleImpl _$$SlangBaseStateIdleImplFromJson(
-        Map<String, dynamic> json) =>
-    _$SlangBaseStateIdleImpl(
+SlangBaseStateIdle _$SlangBaseStateIdleFromJson(Map<String, dynamic> json) =>
+    SlangBaseStateIdle(
       $type: json['runtimeType'] as String?,
     );
 
-Map<String, dynamic> _$$SlangBaseStateIdleImplToJson(
-        _$SlangBaseStateIdleImpl instance) =>
+Map<String, dynamic> _$SlangBaseStateIdleToJson(SlangBaseStateIdle instance) =>
     <String, dynamic>{
       'runtimeType': instance.$type,
     };
 
-_$SlangBaseStateDataImpl _$$SlangBaseStateDataImplFromJson(
-        Map<String, dynamic> json) =>
-    _$SlangBaseStateDataImpl(
+SlangBaseStateData _$SlangBaseStateDataFromJson(Map<String, dynamic> json) =>
+    SlangBaseStateData(
       version: (json['version'] as num).toInt(),
       contactData: json['contactData'] == null
           ? const UserContactData()
@@ -38,8 +35,7 @@ _$SlangBaseStateDataImpl _$$SlangBaseStateDataImplFromJson(
       $type: json['runtimeType'] as String?,
     );
 
-Map<String, dynamic> _$$SlangBaseStateDataImplToJson(
-        _$SlangBaseStateDataImpl instance) =>
+Map<String, dynamic> _$SlangBaseStateDataToJson(SlangBaseStateData instance) =>
     <String, dynamic>{
       'version': instance.version,
       'contactData': instance.contactData,
@@ -52,16 +48,14 @@ Map<String, dynamic> _$$SlangBaseStateDataImplToJson(
       'runtimeType': instance.$type,
     };
 
-_$UserContactDataImpl _$$UserContactDataImplFromJson(
-        Map<String, dynamic> json) =>
-    _$UserContactDataImpl(
+_UserContactData _$UserContactDataFromJson(Map<String, dynamic> json) =>
+    _UserContactData(
       email: json['email'] as String?,
       name: json['name'] as String?,
       website: json['website'] as String?,
     );
 
-Map<String, dynamic> _$$UserContactDataImplToJson(
-        _$UserContactDataImpl instance) =>
+Map<String, dynamic> _$UserContactDataToJson(_UserContactData instance) =>
     <String, dynamic>{
       'email': instance.email,
       'name': instance.name,
