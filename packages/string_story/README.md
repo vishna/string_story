@@ -109,12 +109,13 @@ dart run slang
 
 5. In App Integration
 
-   // TODO fill in instructions here, look at the example
+![](https://github.com/vishna/string_story/blob/main/img/architecture.png?raw=true)
 
-   - put SlangBaseCubit above your app
-   - establish binding between your app and the SlangBaseCubit
-   - FIXME write a bunch of code to compile that follows example (this should probably be generated or less PITA)
-   - make sure you screen is wrapped in a TranslationScope
+- Put SlangBaseCubit above your app
+- Establish binding between your app and the SlangBaseCubit
+- Make sure you screen(s) are wrapped in a TranslationScope
+
+Check `example` folder for implementation reference.
 
 ## Why String Stories?
 
