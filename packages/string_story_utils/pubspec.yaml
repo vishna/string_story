@@ -12,7 +12,7 @@ dependencies:
   mustache_recase: ^3.0.0
   crypto: ^3.0.6
   analyzer: ^8.1.1
-  dartantic_ai: ^1.0.8
+  dartantic_ai: ^2.2.2
   dotenv: ^4.2.0
   sealed_languages: ^2.3.0
   freezed_annotation: ^3.1.0
