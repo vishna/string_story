@@ -1,6 +1,6 @@
 name: string_story_utils
 description: "Code generator and utils for string_story package"
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/vishna/string_story/tree/main/packages/string_story_utils
 
 environment:

@@ -69,3 +69,7 @@ bs:
     flutter clean && flutter pub get
     cd example
     flutter clean && flutter pub get
+
+# TODO action to bump up version and add a changelog entry
+# TODO action to dry run publish
+# TODO action to really run publish
