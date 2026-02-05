@@ -110,5 +110,13 @@ update-changelog version:
 sync-changelog:
     cp CHANGELOG.md packages/string_story/CHANGELOG.md
     cp CHANGELOG.md packages/string_story_utils/CHANGELOG.md
-# TODO action to dry run publish
-# TODO action to really run publish
+
+dry-publish:
+    #!/usr/bin/env sh
+    echo "Not implemented"
+    # TODO action to dry run publish
+
+really-publish:
+    #!/usr/bin/env sh
+    echo "Not implemented"
+    # TODO action to really publish (involves tagging a release version and pushing it first)
