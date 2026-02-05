@@ -126,7 +126,30 @@ dry-publish:
     
     echo "✅ Dry run passed for both packages."
 
+# Tags the release and publishes both packages to pub.dev
 really-publish:
     #!/usr/bin/env sh
-    echo "Not implemented"
-    # TODO action to really publish (involves tagging a release version and pushing it first)
+    # 1. Final confirmation
+    read -p "This will tag the current commit and publish to pub.dev. Continue? (y/n) " resp
+    if [ "$resp" != "y" ]; then echo "Aborted."; exit 1; fi
+
+    # 2. Get version from pubspec
+    VERSION=$(grep 'version:' packages/string_story/pubspec.yaml | awk '{print $2}')
+    
+    # 3. Git Tagging
+    echo "🏷️ Tagging version v$VERSION..."
+    git add .
+    git commit -m "chore: release v$VERSION" || echo "No changes to commit"
+    git tag -a "v$VERSION" -m "Release v$VERSION"
+    git push origin main --tags
+
+    # 4. Publication
+    echo "🚀 Publishing string_story_utils..."
+    cd packages/string_story_utils
+    dart pub publish --force
+
+    echo "🚀 Publishing string_story..."
+    cd ../string_story
+    dart pub publish --force
+
+    echo "🎉 Version v$VERSION published successfully!"
