@@ -47,5 +47,36 @@ void main() {
       }
       expect(result, ["Bonjour", "Monde"]);
     });
+
+    // https://github.com/vishna/string_story/issues/1
+    test('translates phrases with line breaks (real network call)', () async {
+      final input = ['Hello\n\nWorld'];
+      final result = await TranslationService.translate(
+        inputPhrases: input,
+        from: 'en',
+        to: 'fr',
+        stringStoryConfig: config,
+      );
+      expect(result.length, input.length);
+      for (final phrase in result) {
+        expect(phrase, isNotEmpty);
+      }
+      expect(result, ["Bonjour\n\nMonde"]);
+    });
+
+    test('translates phrases with keys (real network call)', () async {
+      final input = ['Hello \$name!'];
+      final result = await TranslationService.translate(
+        inputPhrases: input,
+        from: 'en',
+        to: 'fr',
+        stringStoryConfig: config,
+      );
+      expect(result.length, input.length);
+      for (final phrase in result) {
+        expect(phrase, isNotEmpty);
+      }
+      expect(result, ["Bonjour \$name!"]);
+    });
   });
 }
