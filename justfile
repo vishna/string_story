@@ -111,10 +111,20 @@ sync-changelog:
     cp CHANGELOG.md packages/string_story/CHANGELOG.md
     cp CHANGELOG.md packages/string_story_utils/CHANGELOG.md
 
+# Runs dry-run for both packages to ensure they are ready for pub.dev
 dry-publish:
     #!/usr/bin/env sh
-    echo "Not implemented"
-    # TODO action to dry run publish
+    set -e
+    echo "🔍 Validating packages for publication..."
+    just generate
+    
+    cd packages/string_story_utils
+    dart pub publish --dry-run
+    
+    cd ../string_story
+    dart pub publish --dry-run
+    
+    echo "✅ Dry run passed for both packages."
 
 really-publish:
     #!/usr/bin/env sh

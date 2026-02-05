@@ -787,14 +787,14 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.3"
+    version: "0.0.4"
   string_story_utils:
     dependency: "direct dev"
     description:
       path: "../../string_story_utils"
       relative: true
     source: path
-    version: "0.0.3"
+    version: "0.0.4"
   synchronized:
     dependency: transitive
     description:

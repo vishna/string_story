@@ -19,6 +19,7 @@ dependencies:
   collection: ^1.19.1
   recase: ^4.1.0
   path: ^1.9.1
+  json_schema: ^5.2.2
 
 dev_dependencies:
   test: ^1.26.3
