@@ -10,6 +10,8 @@ const String reset = '\x1B[0m';
 const String checkMark = '[✓]';
 const String warnMark = '[!]';
 
+const pluralsSet = <String>{'zero', 'one', 'two', 'few', 'many', 'other'};
+
 void checkPackageSetup() async {
   final List<String> issues = [];
   final List<String> ok = [];
@@ -82,9 +84,7 @@ void checkPackageSetup() async {
         final map = json.decode(content);
         if (map is Map) {
           for (final value in map.values) {
-            if (value is Map &&
-                !(value.keys.toSet().containsAll(
-                    {'zero', 'one', 'two', 'few', 'many', 'other'}))) {
+            if (value is Map && !(pluralsSet.containsAll(value.keys))) {
               issues.add(errMsg('Nested key found in ${file.path}'));
               break;
             }
