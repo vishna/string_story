@@ -117,6 +117,7 @@ dry-publish:
     set -e
     echo "🔍 Validating packages for publication..."
     just generate
+    just sync-changelog
     
     cd packages/string_story_utils
     dart pub publish --dry-run
